@@ -125,15 +125,15 @@
             </div>
 
             <div class="search-box">
-
-                <i class="bi bi-search"></i>
+                <i class="bi bi-search" aria-hidden="true"></i>
 
                 <input
                     id="searchWorkout"
                     type="text"
                     placeholder="Search workouts..."
+                    autocomplete="off"
+                    aria-label="Search workouts"
                 >
-
             </div>
 
         </div>
@@ -447,36 +447,33 @@ Create My Own
     class="form-control">
 
                 <label>Duration</label>
-
-                <div class="row">
-
-    <div class="col-6">
-        <label class="form-label">
-            Hours
-        </label>
-
-        <input
-            type="number"
-            min="0"
-            id="workoutHours"
-            class="form-control">
+<div class="row g-2">
+  <div class="col-6">
+    <div class="input-group duration-input-group">
+      <input
+        type="number"
+        min="0"
+        id="workoutHours"
+        class="form-control"
+        placeholder="0"
+      >
+      <span class="input-group-text">hrs</span>
     </div>
-
-    <div class="col-6">
-        <label class="form-label">
-            Minutes
-        </label>
-
-        <input
-            type="number"
-            min="0"
-            max="59"
-            id="workoutMinutes"
-            class="form-control">
+  </div>
+  <div class="col-6">
+    <div class="input-group duration-input-group">
+      <input
+        type="number"
+        min="0"
+        max="59"
+        id="workoutMinutes"
+        class="form-control"
+        placeholder="0"
+      >
+      <span class="input-group-text">min</span>
     </div>
-
+  </div>
 </div>
-
                 <label>Category</label>
 
                 <select
@@ -532,7 +529,7 @@ Create My Own
 
                 <button
                     id="addWorkoutBtn"
-                    class="btn btn-success">
+                    class="btn btn-primary">
                     Save Workout
                 </button>
 
@@ -584,36 +581,33 @@ Create My Own
     class="form-control">
 
                 <label>Duration</label>
-
-                <div class="row">
-
-    <div class="col-6">
-        <label class="form-label">
-            Hours
-        </label>
+<div class="row g-2">
+  <div class="col-6">
+    <div class="input-group duration-input-group">
 
         <input
             type="number"
             min="0"
             id="editWorkoutHours"
             class="form-control">
+            <span class="input-group-text">hrs</span>
     </div>
-
-    <div class="col-6">
-        <label class="form-label">
-            Minutes
-        </label>
-
+    </div>
+<div class="col-6">
+    <div class="input-group duration-input-group">
         <input
             type="number"
             min="0"
             max="59"
             id="editWorkoutMinutes"
             class="form-control">
+            <span class="input-group-text">min</span>
     </div>
 
-</div>
 
+
+            </div>
+            </div>
             </div>
 
             <div class="modal-footer">
@@ -626,7 +620,7 @@ Create My Own
 
                 <button
                     id="saveWorkoutChanges"
-                    class="btn btn-success">
+                    class="btn btn-primary">
                     Save Changes
                 </button>
 
@@ -635,7 +629,6 @@ Create My Own
         </div>
 
     </div>
-
 </div>
 
 
@@ -718,7 +711,7 @@ Create My Own
 
     </div>
 
-</div>E
+</div>
 
 <!-- ================= REPLACE WORKOUT MODAL ================= -->
 
@@ -797,6 +790,7 @@ Create My Own
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
 
 
+<script src="javascript/session.js"></script>
 <script src="javascript/data.js"></script>
 
 

@@ -102,6 +102,7 @@ HEADER
      SETTINGS HERO
 ========================== -->
 
+
 <div class="setting-header">
 
 
@@ -115,12 +116,10 @@ HEADER
 </div>
 
 
+<section class="dashboard-card hero-section fade-in">
 
 
-<section class="dashboard-card settings-profile-section">
-
-
-    <div class="dashboard-panel profile-card">
+    <div class="hero-content">
 
 
         <div class="profile-layout">
@@ -160,7 +159,7 @@ HEADER
 
 
 
-        <div class="profile-badge">
+        <span class="badge profile-badge badge-primary">
 
 
             <i class="bi bi-shield-check"></i>
@@ -169,7 +168,7 @@ HEADER
             Fitness Profile
 
 
-        </div>
+        </span>
 
 
 
@@ -288,7 +287,7 @@ Height (cm)
 id="bodyHeight"
 type="number"
 class="form-control premium-input"
-placeholder="170">
+placeholder="--">
 
 </div>
 
@@ -298,7 +297,8 @@ placeholder="170">
 
 <label class="form-label">
 
-Weight
+<span>Weight</span>
+<span style="opacity: 0.8;" id="bodyWeightUnit"> kg  </span>
 
 </label>
 
@@ -307,7 +307,7 @@ Weight
 id="bodyWeight"
 type="number"
 class="form-control premium-input"
-placeholder="70">
+placeholder="--">
 
 
 </div>
@@ -391,31 +391,21 @@ class="form-select premium-input">
 
 
 
-<div class="form-group">
+<div class="form-group mb-4">
+  <label class="form-label" for="bmi">BMI</label>
 
+  <div class="metric-display">
+    <i class="bi bi-calculator" aria-hidden="true"></i>
 
-<label class="form-label">
-
-BMI
-
-</label>
-
-
-<div class="metric-display">
-
-
-<i class="bi bi-calculator"></i>
-
-
-<input
-id="bmi"
-class="form-control premium-input"
-readonly>
-
-
-</div>
-
-
+    <input
+      type="text"
+      id="bmi"
+      class="form-control premium-input metric-readonly"
+      readonly
+      tabindex="-1"
+      aria-readonly="true"
+    >
+  </div>
 </div>
 
 
@@ -993,53 +983,27 @@ data-bs-dismiss="modal">
 
 <div class="modal-body">
 
+    <p>
+        <strong>Version:</strong>
+        1.0.0
+    </p>
 
-<p>
+    <p>
+        <strong>Developer:</strong>
+        Gabby
+    </p>
 
-<strong>
-Version:
-</strong>
+    <p>
+        LiftLog is your personal training companion built to help you plan workouts, track every session, and stay consistent over time.
+    </p>
 
-1.0.0
+    <p>
+        Log sets, reps, and weights, monitor progress, and keep your fitness goals clear and achievable, day after day.
+    </p>
 
-</p>
-
-
-
-<p>
-
-<strong>
-Developer:
-</strong>
-
-Gabby
-
-</p>
-
-
-
-<p>
-
-<strong>
-Built With:
-</strong>
-
-HTML, CSS, Bootstrap & JavaScript
-
-</p>
-
-
-
-
-<p>
-
-LiftLog helps you track workouts,
-monitor progress, build consistency
-and achieve your fitness goals.
-
-</p>
-
-
+    <p class="mb-0">
+        Whether you’re building strength, improving endurance, or forming a daily habit, LiftLog is here to support your journey.
+    </p>
 
 </div>
 
@@ -1288,6 +1252,7 @@ SCRIPTS
 
 
 <script src="javascript/data.js"></script>
+<script src="javascript/session.js"></script>
 
 
 <script src="javascript/settings.js"></script>

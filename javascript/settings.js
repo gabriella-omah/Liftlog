@@ -1,5 +1,11 @@
 // ========================================
-// PROFILE
+// LiftLog — Settings Page
+// javascript/settings.js
+// ========================================
+
+
+// ========================================
+// PROFILE ELEMENTS
 // ========================================
 
 const profileName =
@@ -7,6 +13,9 @@ const profileName =
 
 const bodyHeight =
     document.getElementById("bodyHeight");
+
+const bodyWeightUnit =
+    document.getElementById("bodyWeightUnit");
 
 const bodyWeight =
     document.getElementById("bodyWeight");
@@ -34,14 +43,29 @@ const displayGoal =
 
 
 // ========================================
+// PROFILE STATE
+// ========================================
+
+let profile = {
+    id: "",
+    email: "",
+    name: "",
+    height: "",
+    weight: "",
+    level: "Beginner",
+    goal: "Build Muscle"
+};
+
+
+// ========================================
 // CLOSE ALL OPEN SECTIONS
 // ========================================
 
-function closeAllSections(){
+function closeAllSections() {
 
     document
         .querySelectorAll(".accordion-collapse.show")
-        .forEach(section=>{
+        .forEach(section => {
 
             bootstrap
                 .Collapse
@@ -52,60 +76,143 @@ function closeAllSections(){
 
 }
 
-// ========================================
-// LOAD PROFILE
-// ========================================
-
-let profile =
-    JSON.parse(
-        localStorage.getItem("profile")
-    ) || {
-
-        name: "",
-
-        height: "",
-
-        weight: "",
-
-        level: "Beginner",
-
-        goal: "Build Muscle"
-
-    };
-
 
 // ========================================
-// FILL FORM
+// LOAD PROFILE FROM BACKEND
 // ========================================
 
-if(profileName){
+async function loadProfile() {
 
-    profileName.value = profile.name;
+    const session =
+        getLiftLogSession();
 
-}
+    if (
+        !session ||
+        !session.access_token
+    ) {
 
-if(bodyHeight){
+        window.location.replace(
+            "login.html"
+        );
 
-    bodyHeight.value = profile.height;
+        return;
+    }
 
-}
+    try {
 
-if(bodyWeight){
+        const response =
+            await fetch(
+                "http://localhost:5000/api/profile",
+                {
+                    method: "GET",
 
-    bodyWeight.value = profile.weight;
+                    headers: {
+                        "Authorization":
+                            `Bearer ${session.access_token}`,
 
-}
+                        "Content-Type":
+                            "application/json"
+                    }
+                }
+            );
 
-if(fitnessLevel){
+        const result =
+            await response.json();
 
-    fitnessLevel.value = profile.level;
+        console.log(
+            "PROFILE LOAD RESPONSE:",
+            response.status,
+            result
+        );
 
-}
+        if (!response.ok) {
 
-if(fitnessGoal){
+            showToast(
+                result.error ||
+                "Failed to load profile.",
+                "error"
+            );
 
-    fitnessGoal.value = profile.goal;
+            return;
+        }
 
+        if (!result.profile) {
+
+            showToast(
+                "No profile data was returned.",
+                "error"
+            );
+
+            return;
+        }
+
+        profile =
+            result.profile;
+
+        // --------------------------------
+        // Fill form
+        // --------------------------------
+
+        if (profileName) {
+
+            profileName.value =
+                profile.name || "";
+
+        }
+
+        if (bodyHeight) {
+
+            bodyHeight.value =
+                profile.height || "";
+
+        }
+
+        if (bodyWeight) {
+
+            bodyWeight.value =
+                profile.weight 
+                ? convertFromKg(profile.weight)
+                : "";
+
+        }
+
+        if (fitnessLevel) {
+
+            fitnessLevel.value =
+                profile.level ||
+                "Beginner";
+
+        }
+
+        if (fitnessGoal) {
+
+            fitnessGoal.value =
+                profile.goal ||
+                "Build Muscle";
+
+        }
+
+        updateProfileCard();
+        calculateBMI();
+        updateNavbarProfile();
+
+        console.log(
+            "Profile loaded successfully:",
+            profile
+        );
+
+    } catch (error) {
+
+        console.error(
+            "PROFILE LOAD ERROR:",
+            error
+        );
+
+        showToast(
+            "Unable to connect to the LiftLog server.",
+            "error"
+        );
+    }
 }
 
 
@@ -113,155 +220,291 @@ if(fitnessGoal){
 // UPDATE PROFILE CARD
 // ========================================
 
-function updateProfileCard(){
+function updateProfileCard() {
 
-    if(!displayName) return;
+    if (!displayName) {
+        return;
+    }
 
     const fullName =
-        profile.name.trim();
+        String(profile.name || "").trim();
 
-    if(fullName){
+    if (fullName) {
 
         displayName.textContent =
-    fullName
-        .split(" ")
-        .map(word =>
-            word.charAt(0).toUpperCase() +
-            word.slice(1).toLowerCase()
-        )
-        .join(" ");
+            fullName
+                .split(" ")
+                .map(word =>
+                    word.charAt(0).toUpperCase() +
+                    word.slice(1).toLowerCase()
+                )
+                .join(" ");
 
         const initials =
             fullName
                 .split(" ")
-                .map(word => word.charAt(0))
+                .map(word =>
+                    word.charAt(0)
+                )
                 .join("")
-                .substring(0,2)
+                .substring(0, 2)
                 .toUpperCase();
 
-        profileAvatar.textContent =
-            initials;
+        if (profileAvatar) {
+            profileAvatar.textContent =
+                initials;
+        }
 
-    }
-
-    else{
+    } else {
 
         displayName.textContent =
             "Your Name";
 
-        profileAvatar.textContent =
-            "G";
-
+        if (profileAvatar) {
+            profileAvatar.textContent =
+                "G";
+        }
     }
 
-    displayGoal.textContent =
-        profile.goal;
+    if (displayGoal) {
 
+        displayGoal.textContent =
+            profile.goal ||
+            "Build Muscle";
+    }
 }
-
 
 
 // ========================================
 // BMI
 // ========================================
 
-function calculateBMI(){
+function calculateBMI() {
 
-    if(!bmiField) return;
+    if (
+        !bmiField ||
+        !bodyHeight ||
+        !bodyWeight
+    ) {
+        return;
+    }
 
     const height =
-        parseFloat(bodyHeight.value);
+        parseFloat(
+            bodyHeight.value
+        );
 
     const weight =
-        parseFloat(bodyWeight.value);
+        parseFloat(
+            bodyWeight.value
+        );
 
-    if(
-
+    if (
         !height ||
-
         !weight ||
-
-        height <= 0
-
-    ){
+        height <= 0 ||
+        weight <= 0
+    ) {
 
         bmiField.value = "";
 
         return;
-
     }
 
     const bmi =
         weight /
-        Math.pow(height / 100,2);
+        Math.pow(
+            height / 100,
+            2
+        );
 
     bmiField.value =
         bmi.toFixed(1);
-
 }
 
 
 // ========================================
-// SAVE PROFILE
+// SAVE PROFILE TO BACKEND
 // ========================================
 
-if(saveProfileBtn){
+if (saveProfileBtn) {
 
-saveProfileBtn.addEventListener("click",()=>{
+    saveProfileBtn.addEventListener(
+        "click",
+        async () => {
 
-const name = profileName.value.trim();
+            const name =
+                profileName
+                    ? profileName.value.trim()
+                    : "";
 
-if (name === "") {
-    showToast("Please enter your name.", "warning");
-    return;
-}
+            // --------------------------------
+            // Validate name
+            // --------------------------------
 
-const namePattern = /^[A-Za-z]+([ '-][A-Za-z]+)*$/;
+            if (!name) {
 
-if (!namePattern.test(name)) {
-    showToast("Name can only contain letters.", "warning");
-    return;
-}
+                showToast(
+                    "Please enter your name.",
+                    "warning"
+                );
 
-    profile = {
+                return;
+            }
 
-        name:
-            name,
+            const namePattern =
+                /^[A-Za-z]+([ '-][A-Za-z]+)*$/;
 
-        height:
-            bodyHeight.value,
+            if (!namePattern.test(name)) {
 
-        weight:
-            bodyWeight.value,
+                showToast(
+                    "Name can only contain letters.",
+                    "warning"
+                );
 
-        level:
-            fitnessLevel.value,
+                return;
+            }
 
-        goal:
-            fitnessGoal.value
+            // --------------------------------
+            // Get session
+            // --------------------------------
 
-    };
+            const session =
+                getLiftLogSession();
 
-    localStorage.setItem(
+            if (
+                !session ||
+                !session.access_token
+            ) {
 
-        "profile",
+                window.location.replace(
+                    "login.html"
+                );
 
-        JSON.stringify(profile)
+                return;
+            }
 
+            // --------------------------------
+            // Prepare profile
+            // --------------------------------
+
+            const updatedProfile = {
+
+                name,
+
+                height:
+                    bodyHeight
+                        ? bodyHeight.value
+                        : "",
+
+                weight:
+                    bodyWeight && bodyWeight.value
+                        ? convertFromKg(bodyWeight.value)
+                        : "",
+
+                level:
+                    fitnessLevel
+                        ? fitnessLevel.value
+                        : "Beginner",
+
+                goal:
+                    fitnessGoal
+                        ? fitnessGoal.value
+                        : "Build Muscle"
+            };
+
+            try {
+
+                saveProfileBtn.disabled =
+                    true;
+
+                saveProfileBtn.textContent =
+                    "Saving...";
+
+                const response =
+                    await fetch(
+                        "http://localhost:5000/api/profile",
+                        {
+                            method: "PUT",
+
+                            headers: {
+                                "Authorization":
+                                    `Bearer ${session.access_token}`,
+
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify(
+                                    updatedProfile
+                                )
+                        }
+                    );
+
+                const result =
+                    await response.json();
+
+                console.log(
+                    "PROFILE SAVE RESPONSE:",
+                    response.status,
+                    result
+                );
+
+                if (!response.ok) {
+
+                    showToast(
+                        result.error ||
+                        "Failed to update profile.",
+                        "error"
+                    );
+
+                    return;
+                }
+
+                // --------------------------------
+                // Update local page state
+                // --------------------------------
+
+                profile =
+                    result.profile;
+
+                localStorage.setItem("profile", JSON.stringify(profile));
+
+                updateProfileCard();
+                calculateBMI();
+                updateNavbarProfile();
+
+
+                showToast(
+                    "Profile updated successfully!",
+                    "success"
+                );
+
+                closeAllSections();
+
+            } catch (error) {
+
+                console.error(
+                    "PROFILE UPDATE ERROR:",
+                    error
+                );
+
+                showToast(
+                    "Unable to save your profile.",
+                    "error"
+                );
+
+            } finally {
+
+                saveProfileBtn.disabled =
+                    false;
+
+                saveProfileBtn.textContent =
+                    "Save Profile";
+            }
+        }
     );
-
-    updateNavbarProfile();
-    
-    updateProfileCard();
-
-    calculateBMI();
-
-    showToast("Profile updated successfully!", "success");
-
-    closeAllSections();
-
-});
-
 }
 
 
@@ -269,91 +512,507 @@ if (!namePattern.test(name)) {
 // LIVE BMI
 // ========================================
 
-if(bodyHeight){
+if (bodyHeight) {
 
     bodyHeight.addEventListener(
-
         "input",
-
         calculateBMI
-
     );
-
 }
 
-if(bodyWeight){
+if (bodyWeight) {
 
     bodyWeight.addEventListener(
-
         "input",
-
         calculateBMI
-
     );
-
 }
 
-
-// ========================================
-// INITIAL LOAD
-// ========================================
-
-updateProfileCard();
-
-calculateBMI();
 
 // ========================================
 // PREFERENCES
 // ========================================
 
-
-
 const weightUnitSelect =
-    document.getElementById("weightUnit");
-
-
+    document.getElementById(
+        "weightUnit"
+    );
 
 
 // ========================================
 // NOTIFICATIONS
 // ========================================
 
+// ========================================
+// NOTIFICATIONS
+// ========================================
 
 const notificationsSwitch =
-    document.getElementById("notifications");
+    document.getElementById(
+        "notifications"
+    );
 
-if (notificationsSwitch) {
 
-    notificationsSwitch.disabled = true;
+// ----------------------------------------
+// Local preference
+// ----------------------------------------
+
+const savedNotificationPreference =
+    localStorage.getItem(
+        "notifications"
+    );
+
+
+// Default to ON only if the user has
+// already explicitly enabled it.
+// Otherwise leave it OFF.
+if (
+    savedNotificationPreference ===
+    null
+) {
+    localStorage.setItem(
+        "notifications",
+        "false"
+    );
+}
+
+
+// ----------------------------------------
+// Update switch appearance
+// ----------------------------------------
+
+function updateNotificationSwitch() {
+
+    if (!notificationsSwitch) {
+        return;
+    }
 
     notificationsSwitch.checked =
-        localStorage.getItem("notifications") === "true";
+        localStorage.getItem(
+            "notifications"
+        ) === "true";
+}
 
-    notificationsSwitch.addEventListener("change", () => {
+
+// ----------------------------------------
+// Enable notifications
+// ----------------------------------------
+
+async function enableLiftLogNotifications() {
+
+    if (
+        !("Notification" in window) ||
+        !("serviceWorker" in navigator) ||
+        !("PushManager" in window)
+    ) {
+
+        showToast(
+            "This browser does not support LiftLog push notifications.",
+            "error"
+        );
+
+        return false;
+    }
+
+
+    // IMPORTANT:
+    // This is called directly from the
+    // user's switch click.
+    const permission =
+        await Notification.requestPermission();
+
+
+    if (
+        permission !==
+        "granted"
+    ) {
 
         localStorage.setItem(
             "notifications",
-            notificationsSwitch.checked
+            "false"
         );
 
-        if (notificationsSwitch.checked) {
+        updateNotificationSwitch();
+
+        if (
+            permission === "denied"
+        ) {
 
             showToast(
-                "Workout reminder enabled.",
-                "success"
+                "Notifications were blocked. You can allow them in your browser or phone settings.",
+                "warning"
             );
 
         } else {
 
             showToast(
-                "Workout reminder disabled.",
+                "Notification permission was not granted.",
                 "warning"
             );
-
         }
 
-    });
+        return false;
+    }
 
+
+    try {
+
+        // Register service worker.
+        if (
+            typeof registerLiftLogServiceWorker ===
+            "function"
+        ) {
+
+            await registerLiftLogServiceWorker();
+        }
+
+
+        const registration =
+            await navigator.serviceWorker.ready;
+
+
+        let subscription =
+            await registration
+                .pushManager
+                .getSubscription();
+
+
+        // --------------------------------
+        // Create push subscription
+        // --------------------------------
+
+        if (!subscription) {
+
+            const keyResponse =
+                await authenticatedFetch(
+                    "http://localhost:5000/api/push/public-key",
+                    {
+                        method: "GET"
+                    }
+                );
+
+
+            if (!keyResponse.ok) {
+
+                throw new Error(
+                    "Could not retrieve push public key."
+                );
+            }
+
+
+            const keyData =
+                await keyResponse.json();
+
+
+            if (
+                !keyData.publicKey
+            ) {
+
+                throw new Error(
+                    "Push public key is missing."
+                );
+            }
+
+
+            const applicationServerKey =
+                urlBase64ToUint8Array(
+                    keyData.publicKey
+                );
+
+
+            subscription =
+                await registration
+                    .pushManager
+                    .subscribe({
+
+                        userVisibleOnly:
+                            true,
+
+                        applicationServerKey
+
+                    });
+        }
+
+
+        // --------------------------------
+        // Save subscription to backend
+        // --------------------------------
+
+        const saveResponse =
+            await authenticatedFetch(
+                "http://localhost:5000/api/push/subscribe",
+                {
+                    method: "POST",
+
+                    body:
+                        JSON.stringify(
+                            subscription.toJSON()
+                        )
+                }
+            );
+
+
+        if (!saveResponse.ok) {
+
+            const errorText =
+                await saveResponse.text();
+
+            throw new Error(
+                errorText ||
+                "Failed to save push subscription."
+            );
+        }
+
+
+        localStorage.setItem(
+            "notifications",
+            "true"
+        );
+
+
+        updateNotificationSwitch();
+
+
+        showToast(
+            "Workout notifications enabled.",
+            "success"
+        );
+
+
+        // Optional test notification so the user
+        // immediately knows the setup worked.
+        if (
+            typeof getLiftLogServiceWorker ===
+            "function"
+        ) {
+
+            const sw =
+                await getLiftLogServiceWorker();
+
+
+            if (sw) {
+
+                await sw.showNotification(
+                    "LiftLog Notifications Enabled",
+                    {
+                        body:
+                            "You will receive workout timer notifications from LiftLog.",
+
+                        icon:
+                            "/icons/icon-192.png",
+
+                        badge:
+                            "/icons/icon-192.png",
+
+                        tag:
+                            "liftlog-notification-test",
+
+                        data: {
+                            type:
+                                "notification-test"
+                        }
+                    }
+                );
+            }
+        }
+
+
+        return true;
+
+    } catch (error) {
+
+        console.error(
+            "Enable notifications failed:",
+            error
+        );
+
+
+        localStorage.setItem(
+            "notifications",
+            "false"
+        );
+
+
+        updateNotificationSwitch();
+
+
+        showToast(
+            "LiftLog could not finish notification setup.",
+            "error"
+        );
+
+
+        return false;
+    }
+}
+
+
+// ----------------------------------------
+// Disable notifications
+// ----------------------------------------
+
+async function disableLiftLogNotifications() {
+
+    try {
+
+        if (
+            "serviceWorker" in navigator &&
+            "PushManager" in window
+        ) {
+
+            const registration =
+                await navigator.serviceWorker.ready;
+
+
+            const subscription =
+                await registration
+                    .pushManager
+                    .getSubscription();
+
+
+            if (subscription) {
+
+                const endpoint =
+                    subscription.endpoint;
+
+
+                // Remove subscription from browser.
+                await subscription.unsubscribe();
+
+
+                // Tell backend to stop using
+                // this device subscription.
+                try {
+
+                    await authenticatedFetch(
+                        "http://localhost:5000/api/push/unsubscribe",
+                        {
+                            method: "POST",
+
+                            body:
+                                JSON.stringify({
+                                    endpoint
+                                })
+                        }
+                    );
+
+                } catch (serverError) {
+
+                    console.warn(
+                        "Could not remove push subscription from server:",
+                        serverError
+                    );
+                }
+            }
+        }
+
+
+        localStorage.setItem(
+            "notifications",
+            "false"
+        );
+
+
+        updateNotificationSwitch();
+
+
+        showToast(
+            "Workout notifications disabled.",
+            "warning"
+        );
+
+
+        return true;
+
+    } catch (error) {
+
+        console.error(
+            "Disable notifications failed:",
+            error
+        );
+
+
+        // Still disable locally.
+        localStorage.setItem(
+            "notifications",
+            "false"
+        );
+
+
+        updateNotificationSwitch();
+
+
+        showToast(
+            "Notifications were disabled on this device.",
+            "warning"
+        );
+
+
+        return false;
+    }
+}
+
+
+// ----------------------------------------
+// Switch initialization
+// ----------------------------------------
+
+if (notificationsSwitch) {
+
+    notificationsSwitch.disabled =
+        false;
+
+
+    updateNotificationSwitch();
+
+
+    notificationsSwitch.addEventListener(
+        "change",
+        async () => {
+
+            // User turned ON
+            if (
+                notificationsSwitch.checked
+            ) {
+
+                // Disable the switch while
+                // async permission/subscription work
+                // is happening.
+                notificationsSwitch.disabled =
+                    true;
+
+
+                const success =
+                    await enableLiftLogNotifications();
+
+
+                notificationsSwitch.disabled =
+                    false;
+
+
+                if (!success) {
+
+                    notificationsSwitch.checked =
+                        false;
+                }
+
+
+                return;
+            }
+
+
+            // User turned OFF
+            notificationsSwitch.disabled =
+                true;
+
+
+            await disableLiftLogNotifications();
+
+
+            notificationsSwitch.disabled =
+                false;
+        }
+    );
 }
 
 
@@ -361,184 +1020,213 @@ if (notificationsSwitch) {
 // WEIGHT UNIT
 // ========================================
 
-
-if(weightUnitSelect){
+if (weightUnitSelect) {
 
     weightUnitSelect.value =
         weightUnit;
 
-    weightUnitSelect.addEventListener("change",()=>{
+    weightUnitSelect.addEventListener(
+        "change",
+        () => {
 
-        weightUnit =
-            weightUnitSelect.value;
+            weightUnit =
+                weightUnitSelect.value;
 
-        localStorage.setItem(
-            "weightUnit",
-            weightUnit
-        );
+            localStorage.setItem(
+                "weightUnit",
+                weightUnit
+            );
 
-        updateWeightLabels();
+            updateWeightLabels();
 
-        showToast(
+            if (
+                bodyWeight &&
+                profile.weight
+            ) {
 
-            weightUnit === "kg"
+                bodyWeight.value =
+                    convertFromKg(
+                        profile.weight
+                    );
+            }
 
-            ? "Weight unit changed to kilograms."
+            showToast(
+                weightUnit === "kg"
+                    ? "Weight unit changed to kilograms."
+                    : "Weight unit changed to pounds.",
+                "success"
+            );
 
-            : "Weight unit changed to pounds.", "success"
-
-        );
-
-        // Close accordion automatically
-
-        bootstrap
-            .Collapse
-            .getOrCreateInstance(
-
+            const collapse =
                 document.getElementById(
                     "weightUnitCollapse"
-                )
+                );
 
-            )
-            .hide();
+            if (collapse) {
 
-    });
-
+                bootstrap
+                    .Collapse
+                    .getOrCreateInstance(
+                        collapse
+                    )
+                    .hide();
+            }
+        }
+    );
 }
 
 
 // ========================================
-// UPDATE LABELS
+// UPDATE WEIGHT LABELS
 // ========================================
 
-function updateWeightLabels(){
 
-    document.querySelectorAll(
+function updateProfileWeightUnit() {
 
-        ".weight-unit"
-
-    ).forEach(label=>{
-
-        label.textContent =
-            weightUnit;
-
-    });
-
-}
-
-
-// ========================================
-// GLOBAL HELPERS
-// ========================================
-
-// Display weight according to preference
-
-function formatWeight(weightKg){
-
-    if(!weightKg) return 0;
-
-    if(weightUnit === "kg"){
-
-        return Number(weightKg).toFixed(1);
-
+    if (!bodyWeightUnit) {
+        return;
     }
 
-    return (weightKg * 2.20462).toFixed(1);
-
+    bodyWeightUnit.textContent =
+        weightUnit === "lb"
+            ? "(lb)"
+            : "(kg)";
 }
 
 
-// Convert entered value back to kg before saving
+function updateWeightLabels() {
 
-function convertToKg(value){
+    document
+        .querySelectorAll(".weight-unit")
+        .forEach(label => {
 
-    if(weightUnit === "kg"){
+            label.textContent =
+                weightUnit;
+        });
+
+    updateProfileWeightUnit();
+}
+
+
+// ========================================
+// GLOBAL WEIGHT HELPERS
+// ========================================
+
+function formatWeight(weightKg) {
+
+    if (!weightKg) {
+        return "0";
+    }
+
+    if (weightUnit === "kg") {
+
+        return Number(weightKg)
+            .toFixed(1);
+    }
+
+    return (
+        Number(weightKg) *
+        2.20462
+    ).toFixed(1);
+}
+
+
+function convertToKg(value) {
+
+    if (weightUnit === "kg") {
 
         return Number(value);
-
     }
 
-    return Number(value) / 2.20462;
-
+    return Number(value) /
+        2.20462;
 }
 
 
-// Convert stored kg to current display unit
+function convertFromKg(valueKg) {
 
-function convertFromKg(valueKg){
+    if (weightUnit === "kg") {
 
-    if(weightUnit === "kg"){
-
-        return Number(valueKg).toFixed(1);
-
+        return Number(valueKg)
+            .toFixed(1);
     }
 
-    return (valueKg * 2.20462).toFixed(1);
-
+    return (
+        Number(valueKg) *
+        2.20462
+    ).toFixed(1);
 }
 
 
-// ========================================
-// INITIALISE
-// ========================================
-
-updateWeightLabels();
 // ========================================
 // MODALS
 // ========================================
 
 const signOutBtn =
-    document.getElementById("signOutBtn");
+    document.getElementById(
+        "signOutBtn"
+    );
 
 const confirmSignOut =
-    document.getElementById("confirmSignOut");
+    document.getElementById(
+        "confirmSignOut"
+    );
 
 const deleteAccountBtn =
-    document.getElementById("deleteAccountBtn");
+    document.getElementById(
+        "deleteAccountBtn"
+    );
 
 const confirmDeleteAccount =
-    document.getElementById("confirmDeleteAccount");
+    document.getElementById(
+        "confirmDeleteAccount"
+    );
 
 
 // ========================================
 // SIGN OUT
 // ========================================
 
-if(signOutBtn){
+if (signOutBtn) {
 
-    signOutBtn.addEventListener("click",()=>{
+    signOutBtn.addEventListener(
+        "click",
+        () => {
 
-        closeAllSections();
+            closeAllSections();
 
-        const modal =
-            new bootstrap.Modal(
-
+            const modalElement =
                 document.getElementById(
-
                     "signOutModal"
+                );
 
-                )
+            if (!modalElement) {
+                return;
+            }
 
-            );
+            const modal =
+                new bootstrap.Modal(
+                    modalElement
+                );
 
-        modal.show();
-
-    });
-
+            modal.show();
+        }
+    );
 }
 
 
-if(confirmSignOut){
+if (confirmSignOut) {
 
-    confirmSignOut.addEventListener("click",()=>{
+    confirmSignOut.addEventListener(
+        "click",
+        () => {
 
-        localStorage.clear();
+            // Use the session manager
+            // instead of clearing everything.
+            logoutLiftLog();
 
-        window.location.href =
-            "home.html";
-
-    });
-
+        }
+    );
 }
 
 
@@ -546,125 +1234,147 @@ if(confirmSignOut){
 // DELETE ACCOUNT
 // ========================================
 
-if(deleteAccountBtn){
+if (deleteAccountBtn) {
 
-    deleteAccountBtn.addEventListener("click",()=>{
+    deleteAccountBtn.addEventListener(
+        "click",
+        () => {
 
-        closeAllSections();
+            closeAllSections();
 
-        const modal =
-            new bootstrap.Modal(
-
+            const modalElement =
                 document.getElementById(
-
                     "deleteAccountModal"
+                );
 
-                )
+            if (!modalElement) {
+                return;
+            }
 
-            );
+            const modal =
+                new bootstrap.Modal(
+                    modalElement
+                );
 
-        modal.show();
-
-    });
-
-}
-
-
-if(confirmDeleteAccount){
-
-    confirmDeleteAccount.addEventListener("click",()=>{
-
-        localStorage.clear();
-        sessionStorage.clear();
-
-        const modalEl = document.getElementById("deleteAccountModal");
-        const modal = bootstrap.Modal.getInstance(modalEl);
-
-        if(modal){
-            modal.hide();
+            modal.show();
         }
-
-        showToast("Your account has been deleted.", "warning");
-
-        setTimeout(()=>{
-            window.location.href = "home.html";
-        },1200);
-
-    });
-
+    );
 }
 
+if (confirmDeleteAccount) {
 
-// ========================================
-// HOME PAGE PROFILE UPDATE
-// ========================================
+    confirmDeleteAccount.addEventListener(
+        "click",
+        async () => {
 
-function updateHomeProfile(){
+            const session =
+                getLiftLogSession();
 
-    const savedProfile =
-        JSON.parse(
-            localStorage.getItem("profile")
-        );
+            if (
+                !session ||
+                !session.access_token
+            ) {
 
-    if(!savedProfile) return;
+                window.location.replace(
+                    "login.html"
+                );
 
-    const firstName =
-        savedProfile.name
-        .trim()
-        .split(" ")[0];
+                return;
+            }
 
-    const homeGreeting =
-        document.getElementById("homeUserName");
+            try {
 
-    const homeAvatar =
-        document.getElementById("homeAvatar");
+                confirmDeleteAccount.disabled = true;
 
-    if(homeGreeting){
+                confirmDeleteAccount.textContent =
+                    "Deleting...";
 
-        homeGreeting.textContent =
-            firstName;
+                const response =
+                    await fetch(
+                        "http://localhost:5000/api/profile",
+                        {
+                            method: "DELETE",
 
-    }
+                            headers: {
+                                "Authorization":
+                                    `Bearer ${session.access_token}`
+                            }
+                        }
+                    );
 
-    if(homeAvatar){
+                const result =
+                    await response.json();
 
-        const initials =
-            savedProfile.name
-            .split(" ")
-            .map(word=>word.charAt(0))
-            .join("")
-            .substring(0,2)
-            .toUpperCase();
+                if (!response.ok) {
 
-        homeAvatar.textContent =
-            initials;
+                    console.error(
+                        "Account deletion failed:",
+                        result
+                    );
 
-    }
+                    showToast(
+                        result.error ||
+                        "Failed to delete account.",
+                        "error"
+                    );
 
+                    return;
+                }
+
+                // Account really was deleted.
+                localStorage.clear();
+                sessionStorage.clear();
+
+                const modalEl =
+                    document.getElementById(
+                        "deleteAccountModal"
+                    );
+
+                const modal =
+                    bootstrap.Modal.getInstance(
+                        modalEl
+                    );
+
+                if (modal) {
+                    modal.hide();
+                }
+
+                showToast(
+                    "Your account has been deleted.",
+                    "success"
+                );
+
+                setTimeout(() => {
+
+                    window.location.replace(
+                        "home.html"
+                    );
+
+                }, 1200);
+
+            } catch (error) {
+
+                console.error(
+                    "DELETE ACCOUNT REQUEST ERROR:",
+                    error
+                );
+
+                showToast(
+                    "Unable to delete your account.",
+                    "error"
+                );
+
+            } finally {
+
+                confirmDeleteAccount.disabled =
+                    false;
+
+                confirmDeleteAccount.textContent =
+                    "Delete Account";
+            }
+        }
+    );
 }
-
-
-// ========================================
-// INITIALISE
-// ========================================
-
-document.addEventListener(
-
-    "DOMContentLoaded",
-
-    ()=>{
-
-        updateProfileCard();
-
-        calculateBMI();
-
-        updateWeightLabels();
-
-        updateHomeProfile();
-
-    }
-
-);
 
 
 // ========================================
@@ -672,61 +1382,95 @@ document.addEventListener(
 // ========================================
 
 const aboutTrigger =
-    document.getElementById("aboutTrigger");
+    document.getElementById(
+        "aboutTrigger"
+    );
 
-if(aboutTrigger){
+if (aboutTrigger) {
 
-    aboutTrigger.addEventListener("click",()=>{
+    aboutTrigger.addEventListener(
+        "click",
+        () => {
 
-        closeAllSections();
+            closeAllSections();
 
-        new bootstrap.Modal(
+            const modalElement =
+                document.getElementById(
+                    "aboutModal"
+                );
 
-            document.getElementById(
-                "aboutModal"
-            )
+            if (!modalElement) {
+                return;
+            }
 
-        ).show();
-
-    });
-
+            new bootstrap.Modal(
+                modalElement
+            ).show();
+        }
+    );
 }
+
 
 // ========================================
 // SETTINGS ACCORDION BEHAVIOUR
 // ========================================
-
 
 const settingsTriggers =
     document.querySelectorAll(
         ".settings-collapse-trigger"
     );
 
-settingsTriggers.forEach(trigger => {
+settingsTriggers.forEach(
+    trigger => {
 
-    trigger.addEventListener("click", () => {
+        trigger.addEventListener(
+            "click",
+            () => {
 
-        const targetSelector =
-            trigger.dataset.bsTarget;
+                const targetSelector =
+                    trigger.dataset.bsTarget;
 
-        document
-            .querySelectorAll(".accordion-collapse")
-            .forEach(section => {
+                document
+                    .querySelectorAll(
+                        ".accordion-collapse"
+                    )
+                    .forEach(section => {
 
-                if(
-                    "#" + section.id !== targetSelector &&
-                    section.classList.contains("show")
-                ){
+                        if (
+                            "#" + section.id !==
+                                targetSelector &&
+                            section.classList.contains(
+                                "show"
+                            )
+                        ) {
 
-                    bootstrap
-                        .Collapse
-                        .getOrCreateInstance(section)
-                        .hide();
+                            bootstrap
+                                .Collapse
+                                .getOrCreateInstance(
+                                    section
+                                )
+                                .hide();
+                        }
+                    });
+            }
+        );
+    }
+);
 
-                }
 
-            });
+// ========================================
+// INITIALIZE SETTINGS PAGE
+// ========================================
 
-    });
+document.addEventListener(
+    "DOMContentLoaded",
+    async () => {
 
-});
+        await loadProfile();
+
+        updateWeightLabels();
+
+        calculateBMI();
+
+    }
+);

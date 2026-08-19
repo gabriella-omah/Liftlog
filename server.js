@@ -38,5 +38,4 @@ app.get("/settings", (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`LiftLog running at http://localhost:${PORT}`);
 });

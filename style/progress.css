@@ -1,10 +1,4 @@
 /*==========================================================
-   LIFTLOG PROGRESS PAGE CSS
-   Premium • Clean • Cohesive
-   (includes enhanced Workout Calendar)
-==========================================================*/
-
-/*==========================================================
    ROOT VARIABLES
 ==========================================================*/
 
@@ -42,8 +36,10 @@
   --shadow-lg: 0 35px 90px rgba(15, 23, 42, 0.12);
 
   --primary-gradient: linear-gradient(135deg, #5D8CFF, #7A5AF8);
+
   --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
 
 /*==========================================================
    DARK MODE
@@ -71,7 +67,13 @@
 
   --glass: rgba(18, 22, 30, 0.75);
   --glass-border: rgba(255, 255, 255, 0.05);
+
+  --shadow-xs: 0 2px 8px rgba(0, 0, 0, 0.18);
+  --shadow-sm: 0 10px 25px rgba(0, 0, 0, 0.22);
+  --shadow-md: 0 20px 45px rgba(0, 0, 0, 0.28);
+  --shadow-lg: 0 35px 90px rgba(0, 0, 0, 0.38);
 }
+
 
 /*==========================================================
    HERO
@@ -90,6 +92,7 @@
 .progress-hero p {
   max-width: 540px;
 }
+
 
 /*==========================================================
    STATS
@@ -126,7 +129,7 @@
 
 .stat-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+  box-shadow: var(--shadow-md);
 }
 
 .stat-icon {
@@ -175,6 +178,7 @@
   background: rgba(168, 85, 247, 0.12);
   color: #a855f7;
 }
+
 
 /*==========================================================
    RINGS
@@ -225,7 +229,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+  box-shadow: var(--shadow-sm);
 }
 
 .ring-inner h3 {
@@ -246,16 +250,29 @@
 }
 
 .ring-orange {
-  background: conic-gradient(#f97316, #fdba74, #e5e7eb);
+  background: conic-gradient(
+    #f97316,
+    #fdba74,
+    #e5e7eb
+  );
 }
 
 .ring-blue {
-  background: conic-gradient(#3b82f6, #93c5fd, #e5e7eb);
+  background: conic-gradient(
+    #3b82f6,
+    #93c5fd,
+    #e5e7eb
+  );
 }
 
 .ring-green {
-  background: conic-gradient(#22c55e, #86efac, #e5e7eb);
+  background: conic-gradient(
+    #22c55e,
+    #86efac,
+    #e5e7eb
+  );
 }
+
 
 /*==========================================================
    TRAINING TIME
@@ -274,7 +291,7 @@
 
 .training-time-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 16px 35px rgba(15, 23, 42, 0.1);
+  box-shadow: var(--shadow-md);
 }
 
 .training-time-card h3 {
@@ -291,6 +308,7 @@
   font-size: 14px;
   font-weight: 600;
 }
+
 
 /*==========================================================
    CHART
@@ -315,6 +333,7 @@
   width: 100% !important;
   height: 280px !important;
 }
+
 
 /*==========================================================
    CALENDAR CONTROLS
@@ -358,6 +377,7 @@
   transform: translateY(-3px);
   box-shadow: 0 8px 18px rgba(52, 199, 89, 0.25);
 }
+
 
 /*==========================================================
    CALENDAR GRID
@@ -404,12 +424,16 @@
   gap: 5px;
   cursor: pointer;
   font-family: inherit;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease;
 }
 
 .calendar-day:hover {
   transform: translateY(-3px);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-sm);
   border-color: var(--success);
 }
 
@@ -494,6 +518,7 @@
   box-shadow: 0 0 0 3px rgba(52, 199, 89, 0.25);
 }
 
+
 /*==========================================================
    LEGEND
 ==========================================================*/
@@ -521,10 +546,22 @@
   display: inline-block;
 }
 
-.legend-dot.completed { background: var(--success); }
-.legend-dot.missed    { background: var(--danger); }
-.legend-dot.today     { background: var(--warning); }
-.legend-dot.rest      { background: #adb5bd; }
+.legend-dot.completed {
+  background: var(--success);
+}
+
+.legend-dot.missed {
+  background: var(--danger);
+}
+
+.legend-dot.today {
+  background: var(--warning);
+}
+
+.legend-dot.rest {
+  background: #adb5bd;
+}
+
 
 /*==========================================================
    CALENDAR DETAIL MODAL
@@ -545,10 +582,21 @@
   font-weight: 600;
 }
 
-.completed-text { color: var(--success); }
-.missed-text    { color: var(--danger); }
-.upcoming-text  { color: var(--primary); }
-.rest-text      { color: var(--text-muted); }
+.completed-text {
+  color: var(--success);
+}
+
+.missed-text {
+  color: var(--danger);
+}
+
+.upcoming-text {
+  color: var(--primary);
+}
+
+.rest-text {
+  color: var(--text-muted);
+}
 
 .calendar-workout-detail {
   padding: 2px 0;
@@ -734,6 +782,7 @@
   color: var(--text-muted);
 }
 
+
 /*==========================================================
    HISTORY
 ==========================================================*/
@@ -769,8 +818,8 @@
 }
 
 .history-card:hover {
-  transform: translateY(-3Px);
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.1);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
 }
 
 .history-top {
@@ -830,6 +879,7 @@
   color: #3b82f6;
 }
 
+
 /*==========================================================
    EMPTY STATE
 ==========================================================*/
@@ -853,6 +903,7 @@
   font-family: "Poppins", sans-serif;
   color: var(--text);
 }
+
 
 /*==========================================================
    PERSONAL RECORDS
@@ -879,8 +930,8 @@
 }
 
 .pr-item:hover {
-  transform: translateY(-3Ppx);
-  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-sm);
 }
 
 .pr-left {
@@ -911,6 +962,7 @@
   font-weight: 700;
   color: #3b82f6;
 }
+
 
 /*==========================================================
    ACHIEVEMENTS
@@ -970,7 +1022,9 @@
   padding: 18px 20px;
   background: var(--card);
   border-bottom: 1px solid var(--border);
-  transition: 0.25s ease;
+  transition:
+    0.25s ease,
+    background 0.25s ease;
   animation: progressFade 0.35s ease both;
 }
 
@@ -994,6 +1048,7 @@
 .achievement-row i {
   font-size: 18px;
 }
+
 
 /*==========================================================
    EXPORT
@@ -1045,6 +1100,7 @@
   font-size: 18px;
 }
 
+
 /*==========================================================
    ANIMATIONS
 ==========================================================*/
@@ -1054,6 +1110,7 @@
     opacity: 0;
     transform: translateY(18px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -1073,8 +1130,9 @@
     color 0.25s ease;
 }
 
+
 /*==========================================================
-   DARK MODE
+   DARK MODE — COMPONENT OVERRIDES
 ==========================================================*/
 
 .dark-mode .chart-wrapper {
@@ -1228,8 +1286,9 @@
   color: #9d86ff;
 }
 
+
 /*==========================================================
-   MOBILE – more padding & gap
+   MOBILE
 ==========================================================*/
 
 @media (max-width: 768px) {
@@ -1450,7 +1509,13 @@
   }
 }
 
+
+/*==========================================================
+   EXTRA SMALL DEVICES
+==========================================================*/
+
 @media (max-width: 400px) {
+
   .stat-card {
     padding: 16px 14px;
   }

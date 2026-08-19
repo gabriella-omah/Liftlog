@@ -33,7 +33,7 @@ const ASSETS = [
     "/javascript/library.js",
     "/javascript/workout.js",
     "/javascript/workouts.js",
-    "/javascript/index.js",
+    "/javascript/home.js",
     "/javascript/streak.js",
     "/javascript/settings.js",
     "/javascript/progress.js",

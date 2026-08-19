@@ -453,21 +453,13 @@ data-bs-dismiss="modal">
 
     <label class="form-label">Workout</label>
 
-    <div class="alert alert-success mb-0">
-
         <strong id="existingWorkoutName"></strong>
 
-    </div>
 
 </div>
 
+
 <div id="newWorkoutContainer" class="d-none mt-3">
-
-    <div class="alert alert-warning">
-
-        No workout scheduled for this date.
-
-    </div>
 
     <label class="form-label">
         Workout Name
@@ -475,7 +467,9 @@ data-bs-dismiss="modal">
 
     <input
         id="newWorkoutName"
-        class="form-control">
+        class="form-control"
+        placeholder="e.g. Push Day"
+    >
 
     <label class="form-label mt-3">
         Category
@@ -483,12 +477,11 @@ data-bs-dismiss="modal">
 
     <select
         id="newWorkoutCategory"
-        class="form-select">
-
+        class="form-select"
+    >
         <option>Strength</option>
         <option>Cardio</option>
         <option>Mobility</option>
-
     </select>
 
     <label class="form-label mt-3">
@@ -497,12 +490,11 @@ data-bs-dismiss="modal">
 
     <select
         id="newWorkoutGoal"
-        class="form-select">
-
+        class="form-select"
+    >
         <option>Build Muscle</option>
         <option>Lose Weight</option>
         <option>General Fitness</option>
-
     </select>
 
     <label class="form-label mt-3">
@@ -511,16 +503,14 @@ data-bs-dismiss="modal">
 
     <select
         id="newWorkoutDifficulty"
-        class="form-select">
-
+        class="form-select"
+    >
         <option>Beginner</option>
         <option>Intermediate</option>
         <option>Advanced</option>
-
     </select>
 
 </div>
-</select>
 
 
 
@@ -737,6 +727,7 @@ Add Exercise
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
 
 
+<script src="javascript/session.js"></script>
 <script src="javascript/data.js"></script>
 
 

@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Create Account • LiftLog</title>
+
+    <!-- Bootstrap -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <!-- Bootstrap Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    >
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- Global CSS -->
+    <link rel="stylesheet" href="style/style.css">
+
+    <!-- Register/Auth CSS -->
+    <link rel="stylesheet" href="style/login.css">
+
+    <!-- Font Awesome -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+</head>
+
+<body>
+
+<main class="auth-page">
+
+    <!-- Navbar is loaded here by your existing site system -->
+    <div id="navbar-placeholder"></div>
+
+    <section class="auth-card">
+
+        <!-- =========================================
+             HEADER
+        ========================================== -->
+        <div class="auth-header">
+
+            <span class="auth-eyebrow">
+                <i class="fa-solid fa-bolt"></i>
+                Start your journey
+            </span>
+
+            <h1>Create your LiftLog account</h1>
+
+            <p>
+                Start tracking your workouts and progress.
+                Everything you need to stay consistent.
+            </p>
+
+        </div>
+
+
+        <!-- =========================================
+             REGISTER FORM
+        ========================================== -->
+        <form
+            id="registerForm"
+            class="auth-form"
+            novalidate
+        >
+
+            <!-- NAME -->
+            <div class="form-group">
+
+                <label for="name">
+                    Name
+                </label>
+
+                <div class="input-wrapper">
+
+                    <i class="fa-regular fa-user input-icon"></i>
+
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        placeholder="Enter your name"
+                        autocomplete="name"
+                        minlength="2"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- EMAIL -->
+            <div class="form-group">
+
+                <label for="email">
+                    Email
+                </label>
+
+                <div class="input-wrapper">
+
+                    <i class="fa-regular fa-envelope input-icon"></i>
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="Enter your email"
+                        autocomplete="email"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- PASSWORD -->
+            <div class="form-group">
+
+                <div class="password-label-row">
+
+                    <label for="password">
+                        Password
+                    </label>
+
+                    <span class="password-hint">
+                        8+ characters
+                    </span>
+
+                </div>
+
+                <div class="input-wrapper password-wrapper">
+
+                    <i class="fa-solid fa-lock input-icon"></i>
+
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Create a password"
+                        autocomplete="new-password"
+                        minlength="8"
+                        required
+                    >
+
+                    <!-- Password visibility toggle -->
+                    <button
+                        type="button"
+                        class="password-toggle"
+                        aria-label="Show password"
+                        aria-pressed="false"
+                    >
+                        <i class="fa-regular fa-eye"></i>
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- PASSWORD BENEFITS -->
+            <div class="password-benefits">
+
+                <div class="password-benefit">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>At least 8 characters</span>
+                </div>
+
+                <div class="password-benefit">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>Keep your account secure</span>
+                </div>
+
+            </div>
+
+
+            <!-- REGISTER BUTTON -->
+            <button
+                type="submit"
+                id="registerButton"
+                class="auth-submit"
+            >
+
+                <span class="button-content">
+
+                    <i class="fa-solid fa-user-plus"></i>
+
+                    <span>Create Account</span>
+
+                </span>
+
+            </button>
+
+
+            <!-- MESSAGE -->
+            <p
+                id="registerMessage"
+                class="auth-message"
+                role="alert"
+                aria-live="polite"
+            ></p>
+
+        </form>
+
+
+        <!-- =========================================
+             LOGIN LINK
+        ========================================== -->
+        <div class="auth-divider">
+            <span>Already registered?</span>
+        </div>
+
+        <div class="auth-links">
+
+            <a href="login.html">
+                Log in to your account
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+
+        </div>
+
+
+        <!-- =========================================
+             SECURITY NOTE
+        ========================================== -->
+        <div class="auth-footer">
+
+            <i class="fa-solid fa-shield-halved"></i>
+
+            <span>
+                Your workout data stays private and secure.
+            </span>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- =========================================
+     YOUR EXISTING DATA/JAVASCRIPT
+========================================== -->
+<script src="javascript/data.js"></script>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const registerForm =
+        document.getElementById("registerForm");
+
+    const registerButton =
+        document.getElementById("registerButton");
+
+    const registerMessage =
+        document.getElementById("registerMessage");
+
+    const nameInput =
+        document.getElementById("name");
+
+    const emailInput =
+        document.getElementById("email");
+
+    const passwordInput =
+        document.getElementById("password");
+
+    const passwordToggle =
+        document.querySelector(".password-toggle");
+
+
+    /* =========================================
+       PASSWORD VISIBILITY TOGGLE
+    ========================================== */
+
+    if (passwordInput && passwordToggle) {
+
+        passwordToggle.addEventListener(
+            "click",
+            function () {
+
+                const showingPassword =
+                    passwordInput.type === "text";
+
+                passwordInput.type =
+                    showingPassword
+                        ? "password"
+                        : "text";
+
+                passwordToggle.setAttribute(
+                    "aria-label",
+                    showingPassword
+                        ? "Show password"
+                        : "Hide password"
+                );
+
+                passwordToggle.setAttribute(
+                    "aria-pressed",
+                    showingPassword
+                        ? "false"
+                        : "true"
+                );
+
+                const icon =
+                    passwordToggle.querySelector("i");
+
+                if (icon) {
+
+                    icon.classList.toggle(
+                        "fa-eye",
+                        showingPassword
+                    );
+
+                    icon.classList.toggle(
+                        "fa-eye-slash",
+                        !showingPassword
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =========================================
+       MESSAGE HELPER
+    ========================================== */
+
+    function showMessage(message, type = "error") {
+
+        registerMessage.textContent = message;
+
+        registerMessage.className =
+            "auth-message " + type;
+
+    }
+
+
+    /* =========================================
+       FORM SUBMIT
+    ========================================== */
+
+    registerForm.addEventListener(
+        "submit",
+        async function (event) {
+
+            event.preventDefault();
+
+
+            /* -------------------------------------
+               GET VALUES
+            ------------------------------------- */
+
+            const name =
+                nameInput.value.trim();
+
+            const email =
+                emailInput.value.trim().toLowerCase();
+
+            const password =
+                passwordInput.value;
+
+
+            /* -------------------------------------
+               CLEAR MESSAGE
+            ------------------------------------- */
+
+            showMessage("");
+
+
+            /* -------------------------------------
+               VALIDATION
+            ------------------------------------- */
+
+            if (!name) {
+
+                showMessage(
+                    "Please enter your name."
+                );
+
+                nameInput.focus();
+
+                return;
+            }
+
+
+            if (name.length < 2) {
+
+                showMessage(
+                    "Name must be at least 2 characters."
+                );
+
+                nameInput.focus();
+
+                return;
+            }
+
+
+            if (!email) {
+
+                showMessage(
+                    "Please enter your email."
+                );
+
+                emailInput.focus();
+
+                return;
+            }
+
+
+            if (!emailInput.checkValidity()) {
+
+                showMessage(
+                    "Please enter a valid email address."
+                );
+
+                emailInput.focus();
+
+                return;
+            }
+
+
+            if (!password) {
+
+                showMessage(
+                    "Please create a password."
+                );
+
+                passwordInput.focus();
+
+                return;
+            }
+
+
+            if (password.length < 8) {
+
+                showMessage(
+                    "Password must be at least 8 characters."
+                );
+
+                passwordInput.focus();
+
+                return;
+            }
+
+
+            /* -------------------------------------
+               LOADING STATE
+            ------------------------------------- */
+
+            registerButton.disabled = true;
+
+            registerButton.innerHTML = `
+                <span class="button-content">
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+                    <span>Creating Account...</span>
+                </span>
+            `;
+
+
+            try {
+
+                /* ---------------------------------
+                   SEND TO BACKEND
+                --------------------------------- */
+
+                const response = await fetch(
+                    "http://localhost:5000/api/auth/register",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            name: name,
+                            email: email,
+                            password: password
+                        })
+                    }
+                );
+
+
+                /* ---------------------------------
+                   READ RESPONSE SAFELY
+                --------------------------------- */
+
+                let result = null;
+
+                const contentType =
+                    response.headers.get(
+                        "content-type"
+                    ) || "";
+
+
+                if (
+                    contentType.includes(
+                        "application/json"
+                    )
+                ) {
+
+                    result =
+                        await response.json();
+
+                } else {
+
+                    const text =
+                        await response.text();
+
+                    result = {
+                        error:
+                            text ||
+                            "The server returned an invalid response."
+                    };
+
+                }
+
+
+                /* ---------------------------------
+                   BACKEND ERROR
+                --------------------------------- */
+
+                if (!response.ok || result.success === false) {
+
+                    console.error(
+                        "Registration failed:",
+                        result
+                    );
+
+
+                    let errorMessage =
+                        result.error ||
+                        result.message ||
+                        "Registration failed. Please try again.";
+
+
+                    /*
+                     * Make the RLS error understandable
+                     * instead of showing raw Supabase text.
+                     */
+                    if (
+                        errorMessage
+                            .toLowerCase()
+                            .includes(
+                                "row-level security"
+                            )
+                    ) {
+
+                        errorMessage =
+                            "Your account could not be created because the server database permissions are blocking registration. Please check the users table RLS policy.";
+
+                    }
+
+
+                    showMessage(
+                        errorMessage,
+                        "error"
+                    );
+
+                    return;
+                }
+
+
+                /* ---------------------------------
+                   SUCCESS
+                --------------------------------- */
+
+                console.log(
+                    "Registration successful:",
+                    result
+                );
+
+
+                showMessage(
+                    "Account created successfully! Redirecting to login...",
+                    "success"
+                );
+
+
+                registerForm.reset();
+
+
+                /* ---------------------------------
+                   REDIRECT
+                --------------------------------- */
+
+                setTimeout(
+                    function () {
+
+                        window.location.href =
+                            "login.html";
+
+                    },
+                    1200
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Registration request error:",
+                    error
+                );
+
+
+                showMessage(
+                    "Unable to connect to the LiftLog server. Make sure the backend is running.",
+                    "error"
+                );
+
+
+            } finally {
+
+                registerButton.disabled =
+                    false;
+
+                registerButton.innerHTML = `
+                    <span class="button-content">
+                        <i class="fa-solid fa-user-plus"></i>
+                        <span>Create Account</span>
+                    </span>
+                `;
+
+            }
+
+        }
+    );
+
+});
+
+</script>
+
+</body>
+</html>
