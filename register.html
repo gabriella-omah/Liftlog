@@ -16,7 +16,6 @@
 
     <title>Create Account • LiftLog</title>
 
-
     <!-- =====================================================
          BOOTSTRAP
     ====================================================== -->
@@ -25,7 +24,6 @@
         rel="stylesheet"
     >
 
-
     <!-- =====================================================
          BOOTSTRAP ICONS
     ====================================================== -->
@@ -33,7 +31,6 @@
         rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
     >
-
 
     <!-- =====================================================
          GOOGLE FONTS
@@ -51,7 +48,6 @@
         rel="stylesheet"
     >
 
-
     <!-- =====================================================
          FONT AWESOME
     ====================================================== -->
@@ -59,7 +55,6 @@
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
     >
-
 
     <!-- =====================================================
          GLOBAL CSS
@@ -69,9 +64,8 @@
         href="style/style.css"
     >
 
-
     <!-- =====================================================
-         REGISTER PAGE CSS
+         AUTH CSS
     ====================================================== -->
     <link
         rel="stylesheet"
@@ -80,21 +74,19 @@
 
 </head>
 
-
 <body>
-
-
-<!-- =========================================================
-     PAGE
-========================================================= -->
 
 <main class="auth-page">
 
+    <!-- Navbar -->
     <div id="navbar-placeholder"></div>
 
     <section class="auth-card">
 
-        <!-- Header -->
+        <!-- =================================================
+             HEADER
+        ================================================== -->
+
         <div class="auth-header">
 
             <h1>Create your account</h1>
@@ -105,15 +97,32 @@
 
         </div>
 
-        <!-- Register form -->
-        <form id="registerForm" class="auth-form" novalidate>
+
+        <!-- =================================================
+             REGISTER FORM
+        ================================================== -->
+
+        <form
+            id="registerForm"
+            class="auth-form"
+            novalidate
+        >
+
+            <!-- NAME -->
 
             <div class="form-group">
 
-                <label for="name">Name</label>
+                <label for="name">
+                    Name
+                </label>
 
                 <div class="input-wrapper">
-                    <i class="fa-regular fa-user input-icon" aria-hidden="true"></i>
+
+                    <i
+                        class="fa-regular fa-user input-icon"
+                        aria-hidden="true"
+                    ></i>
+
                     <input
                         type="text"
                         id="name"
@@ -121,18 +130,30 @@
                         placeholder="Your name"
                         autocomplete="name"
                         minlength="2"
+                        maxlength="100"
                         required
                     >
+
                 </div>
 
             </div>
 
+
+            <!-- EMAIL -->
+
             <div class="form-group">
 
-                <label for="email">Email</label>
+                <label for="email">
+                    Email
+                </label>
 
                 <div class="input-wrapper">
-                    <i class="fa-regular fa-envelope input-icon" aria-hidden="true"></i>
+
+                    <i
+                        class="fa-regular fa-envelope input-icon"
+                        aria-hidden="true"
+                    ></i>
+
                     <input
                         type="email"
                         id="email"
@@ -141,16 +162,27 @@
                         autocomplete="email"
                         required
                     >
+
                 </div>
 
             </div>
 
+
+            <!-- PASSWORD -->
+
             <div class="form-group">
 
-                <label for="password">Password</label>
+                <label for="password">
+                    Password
+                </label>
 
                 <div class="input-wrapper password-wrapper">
-                    <i class="fa-solid fa-lock input-icon" aria-hidden="true"></i>
+
+                    <i
+                        class="fa-solid fa-lock input-icon"
+                        aria-hidden="true"
+                    ></i>
+
                     <input
                         type="password"
                         id="password"
@@ -158,19 +190,36 @@
                         placeholder="At least 8 characters"
                         autocomplete="new-password"
                         minlength="8"
+                        maxlength="128"
                         required
                     >
+
                     <button
                         type="button"
                         class="password-toggle"
+                        id="passwordToggle"
                         aria-label="Show password"
                         aria-pressed="false"
                     >
-                        <i class="fa-regular fa-eye" aria-hidden="true"></i>
+                        <i
+                            class="fa-regular fa-eye"
+                            aria-hidden="true"
+                        ></i>
                     </button>
+
                 </div>
 
             </div>
+
+
+            <!-- PASSWORD REQUIREMENT -->
+
+            <div class="password-hint">
+                Password must contain at least 8 characters.
+            </div>
+
+
+            <!-- SUBMIT -->
 
             <button
                 type="submit"
@@ -179,6 +228,9 @@
             >
                 Create Account
             </button>
+
+
+            <!-- MESSAGE -->
 
             <p
                 id="registerMessage"
@@ -189,12 +241,20 @@
 
         </form>
 
-        <!-- Login link -->
+
+        <!-- =================================================
+             LOGIN LINK
+        ================================================== -->
+
         <div class="auth-links">
+
             <p>
                 Already have an account?
-                <a href="login.html">Log in</a>
+                <a href="login.html">
+                    Log in
+                </a>
             </p>
+
         </div>
 
     </section>
@@ -202,13 +262,11 @@
 </main>
 
 
-
 <!-- =========================================================
-     EXISTING DATA SCRIPT
+     DATA SCRIPT
 ========================================================= -->
 
 <script src="javascript/data.js"></script>
-
 
 
 <!-- =========================================================
@@ -216,205 +274,458 @@
 ========================================================= -->
 
 <script>
+
 document.addEventListener("DOMContentLoaded", function () {
-    const registerForm = document.getElementById("registerForm");
-    const registerButton = document.getElementById("registerButton");
-    const registerMessage = document.getElementById("registerMessage");
-    const nameInput = document.getElementById("name");
-    const emailInput = document.getElementById("email");
-    const passwordInput = document.getElementById("password");
-    const passwordToggle = document.querySelector(".password-toggle");
 
-    // ======================================================
-    // PASSWORD TOGGLE
-    // ======================================================
+    const registerForm =
+        document.getElementById("registerForm");
 
-    if (passwordInput && passwordToggle) {
+    const registerButton =
+        document.getElementById("registerButton");
+
+    const registerMessage =
+        document.getElementById("registerMessage");
+
+    const nameInput =
+        document.getElementById("name");
+
+    const emailInput =
+        document.getElementById("email");
+
+    const passwordInput =
+        document.getElementById("password");
+
+    const passwordToggle =
+        document.getElementById("passwordToggle");
+
+
+    /*
+    =========================================================
+    BACKEND URL
+    =========================================================
+    */
+
+    const API_URL =
+        "https://liftlog-otf6.onrender.com";
+
+
+    /*
+    =========================================================
+    PASSWORD TOGGLE
+    =========================================================
+    */
+
+    if (passwordToggle && passwordInput) {
+
         passwordToggle.addEventListener("click", function () {
-            const showingPassword = passwordInput.type === "text";
 
-            passwordInput.type = showingPassword ? "password" : "text";
+            const isPassword =
+                passwordInput.type === "password";
+
+            passwordInput.type =
+                isPassword ? "text" : "password";
 
             passwordToggle.setAttribute(
                 "aria-label",
-                showingPassword ? "Show password" : "Hide password"
+                isPassword
+                    ? "Hide password"
+                    : "Show password"
             );
 
             passwordToggle.setAttribute(
                 "aria-pressed",
-                showingPassword ? "false" : "true"
+                isPassword ? "true" : "false"
             );
 
-            const icon = passwordToggle.querySelector("i");
+            const icon =
+                passwordToggle.querySelector("i");
+
             if (icon) {
-                icon.classList.toggle("fa-eye", showingPassword);
-                icon.classList.toggle("fa-eye-slash", !showingPassword);
+
+                icon.classList.toggle(
+                    "fa-eye",
+                    !isPassword
+                );
+
+                icon.classList.toggle(
+                    "fa-eye-slash",
+                    isPassword
+                );
+
             }
+
         });
+
     }
 
-    // ======================================================
-    // MESSAGE
-    // ======================================================
+
+    /*
+    =========================================================
+    MESSAGE
+    =========================================================
+    */
 
     function showMessage(message, type = "") {
-        if (!registerMessage) return;
+
+        if (!registerMessage) {
+            return;
+        }
 
         registerMessage.textContent = message;
-        registerMessage.className = "auth-message";
+
+        registerMessage.className =
+            "auth-message";
 
         if (type) {
             registerMessage.classList.add(type);
         }
+
     }
 
-    // ======================================================
-    // LOADING
-    // ======================================================
+
+    /*
+    =========================================================
+    LOADING STATE
+    =========================================================
+    */
 
     function setLoadingState(loading) {
-        if (!registerButton) return;
+
+        if (!registerButton) {
+            return;
+        }
 
         registerButton.disabled = loading;
-        registerButton.textContent = loading
-            ? "Creating account..."
-            : "Create Account";
+
+        registerButton.textContent =
+            loading
+                ? "Creating account..."
+                : "Create Account";
+
     }
 
-    // ======================================================
-    // FORM
-    // ======================================================
+
+    /*
+    =========================================================
+    FORM SUBMIT
+    =========================================================
+    */
 
     if (!registerForm) {
-        console.error("registerForm was not found.");
+
+        console.error(
+            "registerForm was not found."
+        );
+
         return;
+
     }
 
-    registerForm.addEventListener("submit", async function (event) {
-        event.preventDefault();
 
-        const name = nameInput.value.trim();
-        const email = emailInput.value.trim().toLowerCase();
-        const password = passwordInput.value;
+    registerForm.addEventListener(
+        "submit",
+        async function (event) {
 
-        showMessage("");
+            event.preventDefault();
 
-        if (!name) {
-            showMessage("Please enter your name.", "error");
-            nameInput.focus();
-            return;
-        }
 
-        if (name.length < 2) {
-            showMessage("Name must be at least 2 characters.", "error");
-            nameInput.focus();
-            return;
-        }
+            /*
+            =================================================
+            GET VALUES
+            =================================================
+            */
 
-        if (!email) {
-            showMessage("Please enter your email.", "error");
-            emailInput.focus();
-            return;
-        }
+            const name =
+                nameInput.value.trim();
 
-        if (!emailInput.checkValidity()) {
-            showMessage("Please enter a valid email address.", "error");
-            emailInput.focus();
-            return;
-        }
+            const email =
+                emailInput.value.trim().toLowerCase();
 
-        if (!password) {
-            showMessage("Please create a password.", "error");
-            passwordInput.focus();
-            return;
-        }
+            const password =
+                passwordInput.value;
 
-        if (password.length < 8) {
-            showMessage("Password must be at least 8 characters.", "error");
-            passwordInput.focus();
-            return;
-        }
 
-        setLoadingState(true);
+            showMessage("");
 
-        try {
-            const response = await fetch(
-    "https://liftlog-otf6.onrender.com/api/auth/register",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        name,
-                        email,
-                        password
-                    })
-                }
-            );
 
-            let result;
-            const contentType = response.headers.get("content-type") || "";
+            /*
+            =================================================
+            VALIDATION
+            =================================================
+            */
 
-            if (contentType.includes("application/json")) {
-                result = await response.json();
-            } else {
-                const text = await response.text();
-                result = {
-                    success: false,
-                    error: text || "The server returned an invalid response."
-                };
-            }
+            if (!name) {
 
-            console.log("Registration response:", result);
+                showMessage(
+                    "Please enter your name.",
+                    "error"
+                );
 
-            if (!response.ok || result.success === false) {
-                console.error("Registration failed:", result);
+                nameInput.focus();
 
-                let message =
-                    result.error ||
-                    result.message ||
-                    "Registration failed. Please try again.";
-
-                const normalized = String(message).toLowerCase();
-
-                if (normalized.includes("row-level security")) {
-                    message =
-                        "Account creation was blocked by the database security policy. Check your Supabase secret key and users table RLS.";
-                }
-
-                if (normalized.includes("already been registered")) {
-                    message = "An account with this email already exists.";
-                }
-
-                showMessage(message, "error");
                 return;
             }
 
-            showMessage(
-                "Account created successfully! Redirecting to login...",
-                "success"
-            );
 
-            registerForm.reset();
+            if (name.length < 2) {
 
-            setTimeout(function () {
-                window.location.href = "login.html";
-            }, 1200);
-        } catch (error) {
-            console.error("Registration request error:", error);
-            showMessage(
-                "Unable to connect to the LiftLog server. Make sure the backend is running on port 5000.",
-                "error"
-            );
-        } finally {
-            setLoadingState(false);
+                showMessage(
+                    "Name must be at least 2 characters.",
+                    "error"
+                );
+
+                nameInput.focus();
+
+                return;
+            }
+
+
+            if (!email) {
+
+                showMessage(
+                    "Please enter your email.",
+                    "error"
+                );
+
+                emailInput.focus();
+
+                return;
+            }
+
+
+            if (!emailInput.checkValidity()) {
+
+                showMessage(
+                    "Please enter a valid email address.",
+                    "error"
+                );
+
+                emailInput.focus();
+
+                return;
+            }
+
+
+            if (!password) {
+
+                showMessage(
+                    "Please create a password.",
+                    "error"
+                );
+
+                passwordInput.focus();
+
+                return;
+            }
+
+
+            if (password.length < 8) {
+
+                showMessage(
+                    "Password must be at least 8 characters.",
+                    "error"
+                );
+
+                passwordInput.focus();
+
+                return;
+            }
+
+
+            /*
+            =================================================
+            START LOADING
+            =================================================
+            */
+
+            setLoadingState(true);
+
+
+            try {
+
+                /*
+                =================================================
+                IMPORTANT:
+                THIS IS REGISTER, NOT LOGIN
+                =================================================
+                */
+
+                const response = await fetch(
+                    `${API_URL}/api/auth/register`,
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            name: name,
+                            email: email,
+                            password: password
+                        })
+                    }
+                );
+
+
+                /*
+                =================================================
+                READ RESPONSE
+                =================================================
+                */
+
+                const contentType =
+                    response.headers.get("content-type") || "";
+
+                let result;
+
+
+                if (
+                    contentType.includes(
+                        "application/json"
+                    )
+                ) {
+
+                    result =
+                        await response.json();
+
+                } else {
+
+                    const text =
+                        await response.text();
+
+                    result = {
+                        success: false,
+                        error:
+                            text ||
+                            "The server returned an invalid response."
+                    };
+
+                }
+
+
+                console.log(
+                    "Registration response:",
+                    result
+                );
+
+
+                /*
+                =================================================
+                HANDLE ERROR
+                =================================================
+                */
+
+                if (
+                    !response.ok ||
+                    result.success === false
+                ) {
+
+                    let message =
+                        result.error ||
+                        result.message ||
+                        "Registration failed. Please try again.";
+
+
+                    const normalized =
+                        String(message).toLowerCase();
+
+
+                    if (
+                        normalized.includes(
+                            "already registered"
+                        ) ||
+                        normalized.includes(
+                            "already been registered"
+                        ) ||
+                        normalized.includes(
+                            "already exists"
+                        )
+                    ) {
+
+                        message =
+                            "An account with this email already exists.";
+
+                    }
+
+
+                    if (
+                        normalized.includes(
+                            "row-level security"
+                        )
+                    ) {
+
+                        message =
+                            "Account creation was blocked by the database security policy. Please check your Supabase users table permissions.";
+
+                    }
+
+
+                    showMessage(
+                        message,
+                        "error"
+                    );
+
+                    return;
+
+                }
+
+
+                /*
+                =================================================
+                SUCCESS
+                =================================================
+                */
+
+                showMessage(
+                    "Account created successfully! Redirecting to login...",
+                    "success"
+                );
+
+
+                registerForm.reset();
+
+
+                /*
+                =================================================
+                REDIRECT
+                =================================================
+                */
+
+                setTimeout(function () {
+
+                    window.location.href =
+                        "login.html";
+
+                }, 1200);
+
+
+            } catch (error) {
+
+                console.error(
+                    "Registration request error:",
+                    error
+                );
+
+
+                showMessage(
+                    "Unable to connect to the LiftLog server. Please check your internet connection or try again.",
+                    "error"
+                );
+
+
+            } finally {
+
+                setLoadingState(false);
+
+            }
+
         }
-    });
+    );
+
 });
+
 </script>
 
-
 </body>
-
 </html>
