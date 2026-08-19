@@ -59,7 +59,7 @@ app.use(
             "http://localhost:5501",
             "http://127.0.0.1:3000",
             "http://localhost:3000",
-            "https://https://liftlog-mauve-eight.vercel.app"
+            "https://liftlog-mauve-eight.vercel.app"
         ],
         methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         allowedHeaders: ["Content-Type", "Authorization"]
