@@ -1,552 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+<title>LiftLog — Log In</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+
+    <!-- =====================================================
+         BOOTSTRAP ICONS
+    ====================================================== -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    >
+
+
+    <!-- =====================================================
+         GOOGLE FONTS
+    ====================================================== -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <!-- =====================================================
+         FONT AWESOME
+    ====================================================== -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+
+<link
+    rel="stylesheet"
+    href="style/style.css"
+>
+<link
+    rel="stylesheet"
+    href="style/login.css"
+>
+
+</head>
+<body>
+<main class="auth-page">
+
+    <div id="navbar-placeholder"></div>
+
+    <section class="auth-card">
+
+        <!-- Header -->
+        <div class="auth-header">
+
+            <h1>Welcome back</h1>
+
+            <p>
+                Log in to continue tracking your workouts and progress.
+            </p>
+
+        </div>
+
+        <!-- Login form -->
+        <form id="loginForm" class="auth-form" novalidate>
+
+            <div class="form-group">
+
+                <label for="email">Email</label>
+
+                <div class="input-wrapper">
+                    <i class="fa-regular fa-envelope input-icon" aria-hidden="true"></i>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="you@example.com"
+                        autocomplete="email"
+                        required
+                    >
+                </div>
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="password">Password</label>
+
+                <div class="input-wrapper password-wrapper">
+                    <i class="fa-solid fa-lock input-icon" aria-hidden="true"></i>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
+                        required
+                    >
+                    <button
+                        type="button"
+                        class="password-toggle"
+                        aria-label="Show password"
+                        aria-pressed="false"
+                    >
+                        <i class="fa-regular fa-eye" aria-hidden="true"></i>
+                    </button>
+                </div>
+
+            </div>
+
+            <button
+                type="submit"
+                id="loginButton"
+                class="auth-submit"
+            >
+                Log In
+            </button>
+
+            <p
+                id="loginMessage"
+                class="auth-message"
+                role="alert"
+                aria-live="polite"
+            ></p>
+
+        </form>
+
+        <!-- Register link -->
+        <div class="auth-links">
+            <p>
+                Don’t have an account?
+                <a href="register.html">Create one</a>
+            </p>
+        </div>
+
+    </section>
+
+</main>
+<script src="javascript/data.js"></script>
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-
-    // =====================================================
-    // LIFTLOG API
-    // =====================================================
-
-    const API_URL = "https://liftlog-otf6.onrender.com";
-
-
-    // =====================================================
-    // ELEMENTS
-    // =====================================================
-
-    const loginForm = document.getElementById("loginForm");
-    const loginButton = document.getElementById("loginButton");
-    const loginMessage = document.getElementById("loginMessage");
-
+/* =========================================================
+   ELEMENTS
+========================================================= */
+const loginForm =
+    document.getElementById("loginForm");
+const loginButton =
+    document.getElementById("loginButton");
+const loginMessage =
+    document.getElementById("loginMessage");
+        const nameInput = document.getElementById("name");
     const emailInput = document.getElementById("email");
     const passwordInput = document.getElementById("password");
+    const passwordToggle = document.querySelector(".password-toggle");
+        // ======================================================
+    // PASSWORD TOGGLE
+    // ======================================================
 
-    const passwordToggle =
-        document.querySelector(".password-toggle");
+    if (passwordInput && passwordToggle) {
+        passwordToggle.addEventListener("click", function () {
+            const showingPassword = passwordInput.type === "text";
 
+            passwordInput.type = showingPassword ? "password" : "text";
 
-    // =====================================================
-    // CHECK ELEMENTS
-    // =====================================================
+            passwordToggle.setAttribute(
+                "aria-label",
+                showingPassword ? "Show password" : "Hide password"
+            );
 
-    if (!loginForm) {
-        console.error("Login form was not found.");
-        return;
-    }
+            passwordToggle.setAttribute(
+                "aria-pressed",
+                showingPassword ? "false" : "true"
+            );
 
-    if (!emailInput) {
-        console.error("Email input was not found.");
-        return;
-    }
-
-    if (!passwordInput) {
-        console.error("Password input was not found.");
-        return;
-    }
-
-
-    // =====================================================
-    // PASSWORD SHOW / HIDE
-    // =====================================================
-
-    if (passwordToggle) {
-
-        passwordToggle.addEventListener(
-            "click",
-            function () {
-
-                const isPassword =
-                    passwordInput.type === "password";
-
-
-                passwordInput.type =
-                    isPassword
-                        ? "text"
-                        : "password";
-
-
-                passwordToggle.setAttribute(
-                    "aria-label",
-                    isPassword
-                        ? "Hide password"
-                        : "Show password"
-                );
-
-
-                passwordToggle.setAttribute(
-                    "aria-pressed",
-                    isPassword
-                        ? "true"
-                        : "false"
-                );
-
-
-                const icon =
-                    passwordToggle.querySelector("i");
-
-
-                if (icon) {
-
-                    icon.classList.toggle(
-                        "fa-eye",
-                        !isPassword
-                    );
-
-                    icon.classList.toggle(
-                        "fa-eye-slash",
-                        isPassword
-                    );
-
-                }
-
+            const icon = passwordToggle.querySelector("i");
+            if (icon) {
+                icon.classList.toggle("fa-eye", showingPassword);
+                icon.classList.toggle("fa-eye-slash", !showingPassword);
             }
-        );
-
+        });
     }
 
-
-    // =====================================================
-    // SHOW MESSAGE
-    // =====================================================
-
-    function showMessage(message, type = "") {
-
-        if (!loginMessage) {
-            console.log(message);
+/* =========================================================
+   LOGIN
+========================================================= */
+loginForm.addEventListener(
+    "submit",
+    async (event) => {
+        event.preventDefault();
+        /* -------------------------------------------------
+           Get form values
+        ------------------------------------------------- */
+        const email =
+            document
+                .getElementById("email")
+                .value
+                .trim();
+        const password =
+            document
+                .getElementById("password")
+                .value;
+        /* -------------------------------------------------
+           Clear previous message
+        ------------------------------------------------- */
+        loginMessage.textContent = "";
+        loginMessage.className = "";
+        /* -------------------------------------------------
+           Basic validation
+        ------------------------------------------------- */
+        if (!email || !password) {
+            loginMessage.textContent =
+                "Please enter your email and password.";
             return;
         }
-
-
-        loginMessage.textContent = message;
-
-        loginMessage.className = "auth-message";
-
-
-        if (type) {
-            loginMessage.classList.add(type);
-        }
-
-    }
-
-
-    // =====================================================
-    // LOADING STATE
-    // =====================================================
-
-    function setLoadingState(loading) {
-
-        if (!loginButton) {
-            return;
-        }
-
-
-        loginButton.disabled = loading;
-
-
-        loginButton.textContent =
-            loading
-                ? "Signing in..."
-                : "Sign In";
-
-    }
-
-
-    // =====================================================
-    // LOGIN FORM
-    // =====================================================
-
-    loginForm.addEventListener(
-        "submit",
-        async function (event) {
-
-            event.preventDefault();
-
-
-            // =================================================
-            // GET VALUES
-            // =================================================
-
-            const email =
-                emailInput.value
-                    .trim()
-                    .toLowerCase();
-
-
-            const password =
-                passwordInput.value;
-
-
-            // Clear previous message
-
-            showMessage("");
-
-
-            // =================================================
-            // VALIDATE EMAIL
-            // =================================================
-
-            if (!email) {
-
-                showMessage(
-                    "Please enter your email.",
-                    "error"
+        try {
+            /* ---------------------------------------------
+               Disable button
+            --------------------------------------------- */
+            loginButton.disabled = true;
+            loginButton.textContent =
+                "Logging In...";
+            /* ---------------------------------------------
+               Send login request to backend
+            --------------------------------------------- */
+            const response =
+                await fetch(
+    `${API_URL}/api/auth/login`,
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+                        body: JSON.stringify({
+                            email,
+                            password
+                        })
+                    }
                 );
-
-                emailInput.focus();
-
-                return;
-            }
-
-
-            if (!emailInput.checkValidity()) {
-
-                showMessage(
-                    "Please enter a valid email address.",
-                    "error"
-                );
-
-                emailInput.focus();
-
-                return;
-            }
-
-
-            // =================================================
-            // VALIDATE PASSWORD
-            // =================================================
-
-            if (!password) {
-
-                showMessage(
-                    "Please enter your password.",
-                    "error"
-                );
-
-                passwordInput.focus();
-
-                return;
-            }
-
-
-            if (password.length < 8) {
-
-                showMessage(
-                    "Password must be at least 8 characters.",
-                    "error"
-                );
-
-                passwordInput.focus();
-
-                return;
-            }
-
-
-            // =================================================
-            // START LOADING
-            // =================================================
-
-            setLoadingState(true);
-
-
+            /* ---------------------------------------------
+               Read backend response
+            --------------------------------------------- */
+            let result;
             try {
-
-                console.log(
-                    "Attempting login..."
-                );
-
-                console.log(
-                    "Login API:",
-                    `${API_URL}/api/auth/login`
-                );
-
-
-                // =================================================
-                // SEND LOGIN REQUEST
-                // =================================================
-
-                const response =
-                    await fetch(
-                        `${API_URL}/api/auth/login`,
-                        {
-                            method: "POST",
-
-                            headers: {
-                                "Content-Type":
-                                    "application/json"
-                            },
-
-                            body: JSON.stringify({
-                                email: email,
-                                password: password
-                            })
-                        }
-                    );
-
-
-                console.log(
-                    "Login HTTP status:",
-                    response.status
-                );
-
-
-                // =================================================
-                // READ RESPONSE
-                // =================================================
-
-                const contentType =
-                    response.headers.get(
-                        "content-type"
-                    ) || "";
-
-
-                let result;
-
-
-                if (
-                    contentType.includes(
-                        "application/json"
-                    )
-                ) {
-
-                    result =
-                        await response.json();
-
-                } else {
-
-                    const text =
-                        await response.text();
-
-
-                    result = {
-                        success: false,
-                        error:
-                            text ||
-                            "The server returned an invalid response."
-                    };
-
-                }
-
-
-                console.log(
-                    "Login response:",
+                result =
+                    await response.json();
+            } catch {
+                result = {
+                    error:
+                        "The server returned an invalid response."
+                };
+            }
+            /* ---------------------------------------------
+               Handle login error
+            --------------------------------------------- */
+            if (!response.ok) {
+                console.error(
+                    "Login failed:",
                     result
                 );
-
-
-                // =================================================
-                // LOGIN FAILED
-                // =================================================
-
-                if (
-                    !response.ok ||
-                    result.success === false
-                ) {
-
-                    const errorMessage =
-                        result.error ||
-                        result.message ||
-                        "Invalid email or password.";
-
-
-                    console.error(
-                        "Login failed:",
-                        errorMessage
-                    );
-
-
-                    showMessage(
-                        errorMessage,
-                        "error"
-                    );
-
-
-                    return;
-                }
-
-
-                // =================================================
-                // LOGIN SUCCESSFUL
-                // =================================================
-
-                console.log(
-                    "Login successful."
-                );
-
-
-                // =================================================
-                // GET TOKEN
-                // =================================================
-
-                const token =
-                    result.token ||
-                    result.access_token ||
-                    result.session?.access_token;
-
-
-                console.log(
-                    "Token returned:",
-                    !!token
-                );
-
-
-                // =================================================
-                // NO TOKEN
-                // =================================================
-
-                if (!token) {
-
-                    console.error(
-                        "The backend returned a successful response but no token.",
-                        result
-                    );
-
-
-                    showMessage(
-                        "Login succeeded, but the server did not return an authentication token.",
-                        "error"
-                    );
-
-
-                    return;
-                }
-
-
-                // =================================================
-                // SAVE TOKEN
-                // =================================================
-
-                localStorage.setItem(
-                    "liftlog_token",
-                    token
-                );
-
-
-                // Also save under common names
-                // so existing LiftLog pages can find it.
-
-                localStorage.setItem(
-                    "token",
-                    token
-                );
-
-
-                localStorage.setItem(
-                    "access_token",
-                    token
-                );
-
-
-                console.log(
-                    "Authentication token saved."
-                );
-
-
-                // =================================================
-                // SAVE USER
-                // =================================================
-
-                if (result.user) {
-
-                    localStorage.setItem(
-                        "liftlog_user",
-                        JSON.stringify(
-                            result.user
-                        )
-                    );
-
-
-                    localStorage.setItem(
-                        "user",
-                        JSON.stringify(
-                            result.user
-                        )
-                    );
-
-
-                    console.log(
-                        "User information saved."
-                    );
-
-                }
-
-
-                // =================================================
-                // SAVE SESSION IF RETURNED
-                // =================================================
-
-                if (result.session) {
-
-                    localStorage.setItem(
-                        "liftlog_session",
-                        JSON.stringify(
-                            result.session
-                        )
-                    );
-
-
-                    console.log(
-                        "Session information saved."
-                    );
-
-                }
-
-
-                // =================================================
-                // SUCCESS MESSAGE
-                // =================================================
-
-                showMessage(
-                    "Login successful! Welcome back.",
-                    "success"
-                );
-
-
-                // =================================================
-                // REDIRECT
-                // =================================================
-
-                console.log(
-                    "Redirecting to home.html..."
-                );
-
-
-                setTimeout(
-                    function () {
-
-                        window.location.href =
-                            "home.html";
-
-                    },
-                    700
-                );
-
-            } catch (error) {
-
-                // =================================================
-                // NETWORK ERROR
-                // =================================================
-
-                console.error(
-                    "LOGIN REQUEST ERROR:",
-                    error
-                );
-
-
-                showMessage(
-                    "Unable to connect to the LiftLog server. Please check your internet connection and try again.",
-                    "error"
-                );
-
-            } finally {
-
-                // =================================================
-                // STOP LOADING
-                // =================================================
-
-                setLoadingState(false);
-
+                loginMessage.textContent =
+                    result.error ||
+                    "Login failed.";
+                return;
             }
-
+            /* ---------------------------------------------
+               Login successful
+            --------------------------------------------- */
+            console.log(
+                "Login successful:",
+                result
+            );
+            /* ---------------------------------------------
+               Save authentication session
+            --------------------------------------------- */
+            if (result.session) {
+                localStorage.setItem(
+                    "liftlogSession",
+                    JSON.stringify(result.session)
+                );
+            }
+            /* ---------------------------------------------
+               Save basic user information
+            --------------------------------------------- */
+            if (result.user) {
+                localStorage.setItem(
+                    "liftlogUser",
+                    JSON.stringify({
+                        id: result.user.id,
+                        email: result.user.email,
+                        name:
+                            result.user.user_metadata?.name ||
+                            ""
+                    })
+                );
+            }
+            /* ---------------------------------------------
+               Success message
+            --------------------------------------------- */
+            loginMessage.textContent =
+                "Login successful!";
+            loginMessage.className =
+                "success";
+            /* ---------------------------------------------
+               Go to dashboard
+            --------------------------------------------- */
+            setTimeout(() => {
+                window.location.replace("home.html");
+            }, 800);
+        } catch (error) {
+            console.error(
+                "Login request error:",
+                error
+            );
+            loginMessage.textContent =
+                "Unable to connect to the LiftLog server. Make sure the backend is running.";
+        } finally {
+            loginButton.disabled = false;
+            loginButton.textContent =
+                "Log In";
         }
-    );
-
-});
+    }
+);
 </script>
+</body>
+</html>
