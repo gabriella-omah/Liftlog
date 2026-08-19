@@ -68,45 +68,85 @@ function displayWelcomeText(profileData) {
 // ========================================
 
 async function loadHomeProfile() {
-    const session = getLiftLogSession();
 
-    if (!session || !session.access_token) {
+    const session =
+        getLiftLogSession();
+
+
+    if (
+        !session ||
+        !session.access_token
+    ) {
+
         return null;
+
     }
 
+
     try {
-        const response = await fetch(
-            "http://localhost:5000/api/profile",
-            {
-                method: "GET",
-                headers: {
-                    Authorization: `Bearer ${session.access_token}`,
-                    "Content-Type": "application/json"
+
+        const response =
+            await fetch(
+                "https://liftlog-otf6.onrender.com/api/profile",
+                {
+                    method: "GET",
+
+                    headers: {
+                        Authorization:
+                            `Bearer ${session.access_token}`,
+
+                        "Content-Type":
+                            "application/json"
+                    }
                 }
-            }
-        );
+            );
+
 
         if (!response.ok) {
-            console.error("HOME PROFILE ERROR:", response.status);
+
+            console.error(
+                "HOME PROFILE ERROR:",
+                response.status
+            );
+
             return null;
+
         }
 
-        const result = await response.json();
+
+        const result =
+            await response.json();
+
 
         if (!result.profile) {
+
             return null;
+
         }
+
 
         localStorage.setItem(
             "profile",
-            JSON.stringify(result.profile)
+            JSON.stringify(
+                result.profile
+            )
         );
 
+
         return result.profile;
+
     } catch (error) {
-        console.error("HOME PROFILE LOAD ERROR:", error);
+
+        console.error(
+            "HOME PROFILE LOAD ERROR:",
+            error
+        );
+
+
         return null;
+
     }
+
 }
 
 function formatWorkoutName(name) {
