@@ -12,15 +12,13 @@
 
     <meta
         name="description"
-        content="Log in to your LiftLog account and continue tracking your workouts."
+        content="Log in to your LiftLog account and track your workouts."
     >
 
     <title>Log In • LiftLog</title>
 
 
-    <!-- =====================================================
-         BOOTSTRAP
-    ====================================================== -->
+    <!-- Bootstrap -->
 
     <link
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
@@ -28,9 +26,7 @@
     >
 
 
-    <!-- =====================================================
-         BOOTSTRAP ICONS
-    ====================================================== -->
+    <!-- Bootstrap Icons -->
 
     <link
         rel="stylesheet"
@@ -38,9 +34,7 @@
     >
 
 
-    <!-- =====================================================
-         GOOGLE FONTS
-    ====================================================== -->
+    <!-- Google Fonts -->
 
     <link
         rel="preconnect"
@@ -59,9 +53,7 @@
     >
 
 
-    <!-- =====================================================
-         FONT AWESOME
-    ====================================================== -->
+    <!-- Font Awesome -->
 
     <link
         rel="stylesheet"
@@ -69,9 +61,7 @@
     >
 
 
-    <!-- =====================================================
-         GLOBAL CSS
-    ====================================================== -->
+    <!-- Global CSS -->
 
     <link
         rel="stylesheet"
@@ -79,9 +69,7 @@
     >
 
 
-    <!-- =====================================================
-         AUTH CSS
-    ====================================================== -->
+    <!-- Auth CSS -->
 
     <link
         rel="stylesheet"
@@ -97,16 +85,8 @@
 <main class="auth-page">
 
 
-    <!-- =====================================================
-         NAVBAR
-    ====================================================== -->
-
     <div id="navbar-placeholder"></div>
 
-
-    <!-- =====================================================
-         LOGIN CARD
-    ====================================================== -->
 
     <section class="auth-card">
 
@@ -124,9 +104,7 @@
         </div>
 
 
-        <!-- =================================================
-             LOGIN FORM
-        ================================================== -->
+        <!-- LOGIN FORM -->
 
         <form
             id="loginForm"
@@ -143,12 +121,14 @@
                     Email
                 </label>
 
+
                 <div class="input-wrapper">
 
                     <i
                         class="fa-regular fa-envelope input-icon"
                         aria-hidden="true"
                     ></i>
+
 
                     <input
                         type="email"
@@ -172,6 +152,7 @@
                     Password
                 </label>
 
+
                 <div class="input-wrapper password-wrapper">
 
                     <i
@@ -179,19 +160,21 @@
                         aria-hidden="true"
                     ></i>
 
+
                     <input
                         type="password"
                         id="password"
                         name="password"
                         placeholder="Your password"
                         autocomplete="current-password"
+                        minlength="8"
                         required
                     >
+
 
                     <button
                         type="button"
                         class="password-toggle"
-                        id="passwordToggle"
                         aria-label="Show password"
                         aria-pressed="false"
                     >
@@ -232,9 +215,7 @@
         </form>
 
 
-        <!-- =================================================
-             REGISTER LINK
-        ================================================== -->
+        <!-- REGISTER LINK -->
 
         <div class="auth-links">
 
@@ -250,24 +231,29 @@
 
     </section>
 
+
 </main>
 
 
-<!-- =========================================================
-     DATA SCRIPT
-========================================================= -->
-
 <script src="javascript/data.js"></script>
 
-
-<!-- =========================================================
-     LOGIN SCRIPT
-========================================================= -->
 
 <script>
 
 document.addEventListener("DOMContentLoaded", function () {
 
+
+    // =====================================================
+    // API
+    // =====================================================
+
+    const API_URL =
+        "https://liftlog-otf6.onrender.com";
+
+
+    // =====================================================
+    // ELEMENTS
+    // =====================================================
 
     const loginForm =
         document.getElementById("loginForm");
@@ -285,54 +271,45 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("password");
 
     const passwordToggle =
-        document.getElementById("passwordToggle");
+        document.querySelector(".password-toggle");
 
 
-    /*
-    =========================================================
-    BACKEND URL
-    =========================================================
-    */
+    // =====================================================
+    // PASSWORD TOGGLE
+    // =====================================================
 
-    const API_URL =
-        "https://liftlog-otf6.onrender.com";
-
-
-    /*
-    =========================================================
-    PASSWORD TOGGLE
-    =========================================================
-    */
-
-    if (passwordToggle && passwordInput) {
+    if (
+        passwordInput &&
+        passwordToggle
+    ) {
 
         passwordToggle.addEventListener(
             "click",
             function () {
 
-                const isPassword =
-                    passwordInput.type === "password";
+                const showingPassword =
+                    passwordInput.type === "text";
 
 
                 passwordInput.type =
-                    isPassword
-                        ? "text"
-                        : "password";
+                    showingPassword
+                        ? "password"
+                        : "text";
 
 
                 passwordToggle.setAttribute(
                     "aria-label",
-                    isPassword
-                        ? "Hide password"
-                        : "Show password"
+                    showingPassword
+                        ? "Show password"
+                        : "Hide password"
                 );
 
 
                 passwordToggle.setAttribute(
                     "aria-pressed",
-                    isPassword
-                        ? "true"
-                        : "false"
+                    showingPassword
+                        ? "false"
+                        : "true"
                 );
 
 
@@ -344,12 +321,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     icon.classList.toggle(
                         "fa-eye",
-                        !isPassword
+                        showingPassword
                     );
 
                     icon.classList.toggle(
                         "fa-eye-slash",
-                        isPassword
+                        !showingPassword
                     );
 
                 }
@@ -360,25 +337,17 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    /*
-    =========================================================
-    MESSAGE
-    =========================================================
-    */
+    // =====================================================
+    // MESSAGE
+    // =====================================================
 
     function showMessage(
         message,
         type = ""
     ) {
 
-        if (!loginMessage) {
-            return;
-        }
-
-
         loginMessage.textContent =
             message;
-
 
         loginMessage.className =
             "auth-message";
@@ -395,20 +364,13 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    /*
-    =========================================================
-    LOADING STATE
-    =========================================================
-    */
+    // =====================================================
+    // LOADING
+    // =====================================================
 
     function setLoadingState(
         loading
     ) {
-
-        if (!loginButton) {
-            return;
-        }
-
 
         loginButton.disabled =
             loading;
@@ -422,28 +384,9 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    /*
-    =========================================================
-    CHECK FORM
-    =========================================================
-    */
-
-    if (!loginForm) {
-
-        console.error(
-            "loginForm was not found."
-        );
-
-        return;
-
-    }
-
-
-    /*
-    =========================================================
-    LOGIN
-    =========================================================
-    */
+    // =====================================================
+    // LOGIN
+    // =====================================================
 
     loginForm.addEventListener(
         "submit",
@@ -452,16 +395,11 @@ document.addEventListener("DOMContentLoaded", function () {
             event.preventDefault();
 
 
-            /*
-            =================================================
-            GET VALUES
-            =================================================
-            */
-
             const email =
                 emailInput.value
                     .trim()
                     .toLowerCase();
+
 
             const password =
                 passwordInput.value;
@@ -470,11 +408,9 @@ document.addEventListener("DOMContentLoaded", function () {
             showMessage("");
 
 
-            /*
-            =================================================
-            VALIDATION
-            =================================================
-            */
+            // =================================================
+            // VALIDATION
+            // =================================================
 
             if (!email) {
 
@@ -486,7 +422,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 emailInput.focus();
 
                 return;
-
             }
 
 
@@ -500,7 +435,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 emailInput.focus();
 
                 return;
-
             }
 
 
@@ -514,26 +448,30 @@ document.addEventListener("DOMContentLoaded", function () {
                 passwordInput.focus();
 
                 return;
-
             }
 
 
-            /*
-            =================================================
-            LOADING
-            =================================================
-            */
+            if (password.length < 8) {
+
+                showMessage(
+                    "Password must be at least 8 characters.",
+                    "error"
+                );
+
+                passwordInput.focus();
+
+                return;
+            }
+
 
             setLoadingState(true);
 
 
-            try {
+            // =================================================
+            // REQUEST
+            // =================================================
 
-                /*
-                =================================================
-                SEND LOGIN REQUEST
-                =================================================
-                */
+            try {
 
                 const response =
                     await fetch(
@@ -547,18 +485,12 @@ document.addEventListener("DOMContentLoaded", function () {
                             },
 
                             body: JSON.stringify({
-                                email: email,
-                                password: password
+                                email,
+                                password
                             })
                         }
                     );
 
-
-                /*
-                =================================================
-                READ SERVER RESPONSE
-                =================================================
-                */
 
                 const contentType =
                     response.headers.get(
@@ -583,6 +515,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     const text =
                         await response.text();
 
+
                     result = {
                         success: false,
                         error:
@@ -599,11 +532,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 );
 
 
-                /*
-                =================================================
-                HANDLE LOGIN ERROR
-                =================================================
-                */
+                // =================================================
+                // ERROR
+                // =================================================
 
                 if (
                     !response.ok ||
@@ -615,92 +546,66 @@ document.addEventListener("DOMContentLoaded", function () {
                         result.message ||
                         "Invalid email or password.";
 
+
                     showMessage(
                         message,
                         "error"
                     );
 
                     return;
-
                 }
 
 
-                /*
-                =================================================
-                FIND TOKEN
-                =================================================
-                */
+                // =================================================
+                // SAVE TOKEN
+                // =================================================
 
                 const token =
                     result.token ||
                     result.access_token ||
-                    result.accessToken ||
-                    (
-                        result.session &&
-                        result.session.access_token
+                    result.session?.access_token;
+
+
+                if (!token) {
+
+                    console.error(
+                        "Login succeeded but no authentication token was returned.",
+                        result
                     );
 
 
-                /*
-                =================================================
-                SAVE AUTH TOKEN
-                =================================================
-                */
-
-                if (token) {
-
-                    localStorage.setItem(
-                        "liftlog_token",
-                        token
+                    showMessage(
+                        "Login succeeded, but the server did not return an authentication token.",
+                        "error"
                     );
 
-                    /*
-                    Optional compatibility keys
-                    */
-
-                    localStorage.setItem(
-                        "token",
-                        token
-                    );
-
-                    localStorage.setItem(
-                        "access_token",
-                        token
-                    );
-
+                    return;
                 }
 
 
-                /*
-                =================================================
-                SAVE USER
-                =================================================
-                */
-
-                const user =
-                    result.user ||
-                    result.profile ||
-                    (
-                        result.data &&
-                        result.data.user
-                    );
+                localStorage.setItem(
+                    "liftlog_token",
+                    token
+                );
 
 
-                if (user) {
+                // Optional user information
+
+                if (result.user) {
 
                     localStorage.setItem(
                         "liftlog_user",
-                        JSON.stringify(user)
+                        JSON.stringify(
+                            result.user
+                        )
                     );
 
                 }
 
 
-                /*
-                =================================================
-                SUCCESS
-                =================================================
-                */
+                // =================================================
+                // SUCCESS
+                // =================================================
 
                 showMessage(
                     "Login successful! Redirecting...",
@@ -708,21 +613,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 );
 
 
-                /*
-                =================================================
-                REDIRECT
-                =================================================
-                */
+                setTimeout(function () {
 
-                setTimeout(
-                    function () {
+                    window.location.href =
+                        "index.html";
 
-                        window.location.href =
-                            "dashboard.html";
-
-                    },
-                    800
-                );
+                }, 800);
 
 
             } catch (error) {
@@ -734,10 +630,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
                 showMessage(
-                    "Unable to connect to the LiftLog server. Please check your internet connection or try again.",
+                    "Unable to connect to the LiftLog server. Please try again.",
                     "error"
                 );
-
 
             } finally {
 
