@@ -34,7 +34,9 @@ workoutTimerAudio.preload = "auto";
 // ========================================
 
 const LIFTLOG_API_BASE =
-    "http://localhost:5000";
+    window.location.hostname === "localhost"
+        ? "http://localhost:5000"
+        : "https://liftlog-otf6.onrender.com";
 
 
 // ========================================
