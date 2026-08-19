@@ -3,69 +3,182 @@
 // javascript/session.js
 // ========================================
 
-function getLiftLogSession() {
-try {
-const session = localStorage.getItem("liftlogSession");
+(function () {
 
-    if (!session) {
-        return null;
-    }
-    return JSON.parse(session);
-} catch (error) {
-    console.error("Invalid LiftLog session:", error);
-    localStorage.removeItem("liftlogSession");
-    return null;
-}
+    // ==================================================
+    // GET SESSION
+    // ==================================================
 
-}
+    window.getLiftLogSession = function () {
 
-function getLiftLogUser() {
-try {
-const user = localStorage.getItem("liftlogUser");
+        try {
 
-    if (!user) {
-        return null;
-    }
-    return JSON.parse(user);
-} catch (error) {
-    console.error("Invalid LiftLog user:", error);
-    localStorage.removeItem("liftlogUser");
-    return null;
-}
+            const session =
+                localStorage.getItem(
+                    "liftlogSession"
+                );
 
-}
 
-function isLiftLogLoggedIn() {
-const session = getLiftLogSession();
+            if (!session) {
+                return null;
+            }
 
-return !!(
-    session &&
-    session.access_token &&
-    session.user
-);
 
-}
+            const parsed =
+                JSON.parse(session);
 
-function requireLiftLogLogin() {
 
-if (isLiftLogLoggedIn()) {
-    return true;
-}
-window.location.replace("login.html");
-return false;
+            if (
+                !parsed ||
+                !parsed.access_token
+            ) {
+                return null;
+            }
 
-}
 
-function logoutLiftLog() {
+            return parsed;
 
-localStorage.removeItem("liftlogSession");
-localStorage.removeItem("liftlogUser");
-window.location.replace("login.html");
+        } catch (error) {
 
-}
+            console.error(
+                "Invalid LiftLog session:",
+                error
+            );
 
-// ========================================
-// Protect current page
-// ========================================
 
-requireLiftLogLogin();
+            localStorage.removeItem(
+                "liftlogSession"
+            );
+
+
+            return null;
+
+        }
+
+    };
+
+
+    // ==================================================
+    // GET USER
+    // ==================================================
+
+    window.getLiftLogUser = function () {
+
+        try {
+
+            const user =
+                localStorage.getItem(
+                    "liftlogUser"
+                );
+
+
+            if (!user) {
+                return null;
+            }
+
+
+            return JSON.parse(user);
+
+        } catch (error) {
+
+            console.error(
+                "Invalid LiftLog user:",
+                error
+            );
+
+
+            localStorage.removeItem(
+                "liftlogUser"
+            );
+
+
+            return null;
+
+        }
+
+    };
+
+
+    // ==================================================
+    // CHECK LOGIN
+    // ==================================================
+
+    window.isLiftLogLoggedIn = function () {
+
+        const session =
+            window.getLiftLogSession();
+
+
+        return !!(
+            session &&
+            session.access_token
+        );
+
+    };
+
+
+    // ==================================================
+    // REQUIRE LOGIN
+    // ==================================================
+
+    window.requireLiftLogLogin = function () {
+
+        if (
+            window.isLiftLogLoggedIn()
+        ) {
+
+            return true;
+
+        }
+
+
+        console.warn(
+            "No LiftLog session found. Redirecting to login."
+        );
+
+
+        window.location.replace(
+            "login.html"
+        );
+
+
+        return false;
+
+    };
+
+
+    // ==================================================
+    // LOGOUT
+    // ==================================================
+
+    window.logoutLiftLog = function () {
+
+        localStorage.removeItem(
+            "liftlogSession"
+        );
+
+
+        localStorage.removeItem(
+            "liftlogUser"
+        );
+
+
+        localStorage.removeItem(
+            "liftlog_token"
+        );
+
+
+        window.location.replace(
+            "login.html"
+        );
+
+    };
+
+
+    // ==================================================
+    // PROTECT CURRENT PAGE
+    // ==================================================
+
+    window.requireLiftLogLogin();
+
+})();

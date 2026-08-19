@@ -239,16 +239,13 @@
 
 
 <script>
-
 document.addEventListener("DOMContentLoaded", function () {
 
-
     // =====================================================
-    // API
+    // LIFTLOG API
     // =====================================================
 
-    const API_URL =
-        "https://liftlog-otf6.onrender.com";
+    const API_URL = "https://liftlog-otf6.onrender.com";
 
 
     // =====================================================
@@ -275,13 +272,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     // =====================================================
+    // SAFETY CHECK
+    // =====================================================
+
+    if (!loginForm) {
+        console.error("Login form was not found.");
+        return;
+    }
+
+
+    // =====================================================
     // PASSWORD TOGGLE
     // =====================================================
 
-    if (
-        passwordInput &&
-        passwordToggle
-    ) {
+    if (passwordInput && passwordToggle) {
 
         passwordToggle.addEventListener(
             "click",
@@ -341,23 +345,18 @@ document.addEventListener("DOMContentLoaded", function () {
     // MESSAGE
     // =====================================================
 
-    function showMessage(
-        message,
-        type = ""
-    ) {
+    function showMessage(message, type = "") {
 
-        loginMessage.textContent =
-            message;
+        if (!loginMessage) return;
+
+        loginMessage.textContent = message;
 
         loginMessage.className =
             "auth-message";
 
-
         if (type) {
 
-            loginMessage.classList.add(
-                type
-            );
+            loginMessage.classList.add(type);
 
         }
 
@@ -368,13 +367,11 @@ document.addEventListener("DOMContentLoaded", function () {
     // LOADING
     // =====================================================
 
-    function setLoadingState(
-        loading
-    ) {
+    function setLoadingState(loading) {
 
-        loginButton.disabled =
-            loading;
+        if (!loginButton) return;
 
+        loginButton.disabled = loading;
 
         loginButton.textContent =
             loading
@@ -422,6 +419,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 emailInput.focus();
 
                 return;
+
             }
 
 
@@ -435,6 +433,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 emailInput.focus();
 
                 return;
+
             }
 
 
@@ -448,6 +447,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 passwordInput.focus();
 
                 return;
+
             }
 
 
@@ -461,6 +461,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 passwordInput.focus();
 
                 return;
+
             }
 
 
@@ -472,6 +473,12 @@ document.addEventListener("DOMContentLoaded", function () {
             // =================================================
 
             try {
+
+                console.log(
+                    "Sending login request to:",
+                    `${API_URL}/api/auth/login`
+                );
+
 
                 const response =
                     await fetch(
@@ -491,6 +498,10 @@ document.addEventListener("DOMContentLoaded", function () {
                         }
                     );
 
+
+                // =================================================
+                // READ RESPONSE
+                // =================================================
 
                 const contentType =
                     response.headers.get(
@@ -527,13 +538,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
                 console.log(
-                    "Login response:",
+                    "LOGIN HTTP STATUS:",
+                    response.status
+                );
+
+                console.log(
+                    "LOGIN RESPONSE:",
                     result
                 );
 
 
                 // =================================================
-                // ERROR
+                // LOGIN FAILED
                 // =================================================
 
                 if (
@@ -547,17 +563,25 @@ document.addEventListener("DOMContentLoaded", function () {
                         "Invalid email or password.";
 
 
+                    console.error(
+                        "LOGIN FAILED:",
+                        message
+                    );
+
+
                     showMessage(
                         message,
                         "error"
                     );
 
+
                     return;
+
                 }
 
 
                 // =================================================
-                // SAVE TOKEN
+                // GET TOKEN
                 // =================================================
 
                 const token =
@@ -566,22 +590,91 @@ document.addEventListener("DOMContentLoaded", function () {
                     result.session?.access_token;
 
 
+                // =================================================
+                // NO TOKEN
+                // =================================================
+
                 if (!token) {
 
                     console.error(
-                        "Login succeeded but no authentication token was returned.",
+                        "LOGIN SUCCEEDED BUT NO TOKEN WAS RETURNED:",
                         result
                     );
 
 
                     showMessage(
-                        "Login succeeded, but the server did not return an authentication token.",
+                        "Login succeeded, but no authentication token was returned by the server.",
                         "error"
                     );
 
+
                     return;
+
                 }
 
+
+                // =================================================
+                // BUILD LIFTLOG SESSION
+                //
+                // IMPORTANT:
+                // session.js expects:
+                //
+                // liftlogSession
+                //
+                // containing:
+                //
+                // access_token
+                // user
+                // =================================================
+
+                const user =
+                    result.user ||
+                    result.session?.user ||
+                    null;
+
+
+                const liftLogSession = {
+
+                    access_token: token,
+
+                    user: user
+
+                };
+
+
+                // =================================================
+                // SAVE SESSION
+                // =================================================
+
+                localStorage.setItem(
+                    "liftlogSession",
+                    JSON.stringify(
+                        liftLogSession
+                    )
+                );
+
+
+                // =================================================
+                // SAVE USER
+                // =================================================
+
+                if (user) {
+
+                    localStorage.setItem(
+                        "liftlogUser",
+                        JSON.stringify(user)
+                    );
+
+                }
+
+
+                // =================================================
+                // KEEP TOKEN TOO
+                //
+                // This isn't required by session.js,
+                // but keeps compatibility with any older
+                // LiftLog code using liftlog_token.
+                // =================================================
 
                 localStorage.setItem(
                     "liftlog_token",
@@ -589,16 +682,30 @@ document.addEventListener("DOMContentLoaded", function () {
                 );
 
 
-                // Optional user information
+                // =================================================
+                // VERIFY SESSION WAS ACTUALLY SAVED
+                // =================================================
 
-                if (result.user) {
-
-                    localStorage.setItem(
-                        "liftlog_user",
-                        JSON.stringify(
-                            result.user
-                        )
+                const savedSession =
+                    localStorage.getItem(
+                        "liftlogSession"
                     );
+
+
+                console.log(
+                    "LIFTLOG SESSION SAVED:",
+                    savedSession
+                );
+
+
+                if (!savedSession) {
+
+                    showMessage(
+                        "Login succeeded, but the browser could not save your session.",
+                        "error"
+                    );
+
+                    return;
 
                 }
 
@@ -608,23 +715,27 @@ document.addEventListener("DOMContentLoaded", function () {
                 // =================================================
 
                 showMessage(
-                    "Login successful! Redirecting...",
+                    "Login successful! Opening LiftLog...",
                     "success"
                 );
 
 
+                // =================================================
+                // REDIRECT TO YOUR REAL HOME PAGE
+                // =================================================
+
                 setTimeout(function () {
 
-                    window.location.href =
-                        "home.html";
+                    window.location.replace(
+                        "home.html"
+                    );
 
-                }, 800);
-
+                }, 500);
 
             } catch (error) {
 
                 console.error(
-                    "Login request error:",
+                    "LOGIN REQUEST ERROR:",
                     error
                 );
 
@@ -644,7 +755,6 @@ document.addEventListener("DOMContentLoaded", function () {
     );
 
 });
-
 </script>
 
 
